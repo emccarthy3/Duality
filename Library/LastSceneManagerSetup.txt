@@ -1,4 +1,8 @@
 sceneSetups:
+<<<<<<< HEAD
 - path: Assets/newBattle.unity
+=======
+- path: Assets/battlescene1.unity
+>>>>>>> d569f4b257595d5cd20ae31c2e66afec25266df4
   isLoaded: 1
   isActive: 1

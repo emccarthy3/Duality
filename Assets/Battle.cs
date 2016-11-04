@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 public class Battle : MonoBehaviour {
 	int turn = 0;
+<<<<<<< HEAD
 	 private Battler playerChar;
 	private Battler partnerChar;
 	private Battler enemy1Char;
@@ -13,10 +14,20 @@ public class Battle : MonoBehaviour {
 	[SerializeField] private Text currentPlayer;
 	[SerializeField] private UIController ui;
 	private List<Battler> battlers;
+=======
+	private Character playerChar;
+	private Character partnerChar;
+	private Character enemy1Char;
+	private Character enemy2Char;
+	[SerializeField] private Text status;
+	[SerializeField] private Text currentPlayer;
+	[SerializeField] private UIController ui;
+>>>>>>> d569f4b257595d5cd20ae31c2e66afec25266df4
 	private List<int> enemyRandomAttacks;
 	private Attacker attacker;
 	private Defender defender;
 	//used to keep track of turns
+<<<<<<< HEAD
 
 	private const int LAST_ATTACKER = 3;
 	private const int NUM_PLAYERS = 2;
@@ -36,18 +47,39 @@ public class Battle : MonoBehaviour {
 		battlers.Add (enemy1Char);
 		battlers.Add (enemy2Char);
 		Debug.Log (battlers [0]);
+=======
+	private List<Battler> battlers;
+
+
+
+	void Start () {
+	//	battlers = new List<Battler> ();
+		playerChar= new Attacker();
+		playerChar.RP = 8;
+		partnerChar.RP = 8;
+		//battlers.Add (playerChar);
+	//	battlers.Add (partnerChar);
+//		battlers.Add (enemy1Char);
+	//	battlers.Add (enemy2Char);
+
+>>>>>>> d569f4b257595d5cd20ae31c2e66afec25266df4
 	//	_defender = enemy1Char;
 		attacker = (Attacker)playerChar;
 	}
 	public void BattleLoop(){
+<<<<<<< HEAD
 		//right now gui calls attack
 	//attacker.attack
+=======
+	
+>>>>>>> d569f4b257595d5cd20ae31c2e66afec25266df4
 
 	}
 	public Defender Defender{
 		get{return defender; }
 		set{defender = value;}
 	}
+<<<<<<< HEAD
 	public IEnumerator Fight(string action){
 		status.text = action;
 		yield return new WaitForSeconds (1);
@@ -69,6 +101,20 @@ public class Battle : MonoBehaviour {
 		}
 	}
 	/*
+=======
+/*	public void SwitchAttacker(){
+		if (battlers.IndexOf (_attacker) == 3) {
+			_attacker = battlers [0];
+			ui.EnableButtonsForPlayerAttack();
+		}else{
+			_attacker = battlers [battlers.IndexOf (_attacker) + 1]; 
+			_attacker.setBlocking(false);
+		}if (battlers.IndexOf (_attacker) >=2 ) {
+			ui.DisableButtonsForEnemyAttack();
+			EnemyAttack ();
+		}
+	}
+>>>>>>> d569f4b257595d5cd20ae31c2e66afec25266df4
 	// Update is called once per frame
 	void Update () {
 		if((enemy1Char.HP <=0 && enemy2Char.HP <= 0) || (playerChar.HP <=0 && partnerChar.HP <=0)){
@@ -131,7 +177,16 @@ public class Battle : MonoBehaviour {
 
 
 	}
+<<<<<<< HEAD
 
+=======
+	public IEnumerator Fight(string action){
+		status.text = action;
+		yield return new WaitForSeconds (1);
+		SwitchAttacker();
+		currentPlayer.text = _attacker.Name + "'s turn";
+	}
+>>>>>>> d569f4b257595d5cd20ae31c2e66afec25266df4
 	private int CalculateDamage(){
 		//make a hashmap for this
 		int damage =0;

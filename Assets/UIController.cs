@@ -52,8 +52,12 @@ public class UIController : MonoBehaviour {
 	}
 	public void OnEnemySelect(string enemyName){
 		
+<<<<<<< HEAD
 	//	battle.BattleLoop ();
 		StartCoroutine(battle.Fight("Attacking"));
+=======
+		battle.BattleLoop ();
+>>>>>>> d569f4b257595d5cd20ae31c2e66afec25266df4
 		enemyChooser.Close ();
 	}
 	public void DisableButtonsForEnemyAttack(){

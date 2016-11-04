@@ -16,6 +16,7 @@
 /Users/emccarthy3/Downloads/Duality/Temp/bin/Debug/Assembly-CSharp.dll.mdb
 /Users/emccarthy3/Downloads/Duality/Temp/bin/Debug/Assembly-CSharp.dll
 /Users/emccarthy3/Downloads/Duality/obj/Debug/Assembly-CSharp.dll.mdb
+<<<<<<< HEAD
 /Users/emccarthy3/Downloads/Duality-master/obj/Debug/Assembly-CSharp.dll
 /Users/emccarthy3/Downloads/Duality-master/obj/Debug/Assembly-CSharp.dll.mdb
 /Users/emccarthy3/Downloads/Duality-master/Temp/bin/Debug/UnityEngine.dll
@@ -34,3 +35,5 @@
 /Users/emccarthy3/Downloads/Duality-master/Temp/bin/Debug/Mono.Cecil.Mdb.dll
 /Users/emccarthy3/Downloads/Duality-master/Temp/bin/Debug/Assembly-CSharp.dll.mdb
 /Users/emccarthy3/Downloads/Duality-master/Temp/bin/Debug/Assembly-CSharp.dll
+=======
+>>>>>>> d569f4b257595d5cd20ae31c2e66afec25266df4
