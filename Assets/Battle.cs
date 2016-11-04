@@ -5,35 +5,41 @@ using System.Collections.Generic;
 
 public class Battle : MonoBehaviour {
 	int turn = 0;
-	private Player _attacker;
-	private Player _defender;
-	private Player playerChar;
-	private Player partnerChar;
-	private Player enemy1Char;
-	private Player enemy2Char;
+	private Character playerChar;
+	private Character partnerChar;
+	private Character enemy1Char;
+	private Character enemy2Char;
 	[SerializeField] private Text status;
 	[SerializeField] private Text currentPlayer;
 	[SerializeField] private UIController ui;
 	private List<int> enemyRandomAttacks;
+	private Attacker attacker;
+	private Defender defender;
 	//used to keep track of turns
-	private List<Player> battlers;
+	private List<Battler> battlers;
+
 
 
 	void Start () {
-		battlers = new List<Player> ();
-		playerChar= new Player ("Player", "W", 10);
-		partnerChar = new Player ("Partner","M", 10);
-		enemy1Char = new Player ("Enemy 1","R", 10);
-		enemy2Char = new Player ("Enemy 2","W", 10);
+	//	battlers = new List<Battler> ();
+		playerChar= new Attacker();
 		playerChar.RP = 8;
 		partnerChar.RP = 8;
-		battlers.Add (playerChar);
-		battlers.Add (partnerChar);
-		battlers.Add (enemy1Char);
-		battlers.Add (enemy2Char);
-		_attacker = playerChar;
-		Debug.Log (_attacker.HP);
-		_defender = enemy1Char;
+		//battlers.Add (playerChar);
+	//	battlers.Add (partnerChar);
+//		battlers.Add (enemy1Char);
+	//	battlers.Add (enemy2Char);
+
+	//	_defender = enemy1Char;
+		attacker = (Attacker)playerChar;
+	}
+	public void BattleLoop(){
+	
+
+	}
+	public Defender Defender{
+		get{return defender; }
+		set{defender = value;}
 	}
 /*	public void SwitchAttacker(){
 		if (battlers.IndexOf (_attacker) == 3) {

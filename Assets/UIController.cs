@@ -52,7 +52,7 @@ public class UIController : MonoBehaviour {
 	}
 	public void OnEnemySelect(string enemyName){
 		
-		battle.SingleAttack (enemyName);
+		battle.BattleLoop ();
 		enemyChooser.Close ();
 	}
 	public void DisableButtonsForEnemyAttack(){
