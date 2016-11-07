@@ -10,7 +10,7 @@ public class Attacker : Battler{
 	}
 
 	//creates an attack.  For now, only doing single attacks but will also implement double attacks
-	public override void Move(){
+	public void Attack(){
 	}
 
 	private void SingleAttack(){
@@ -18,9 +18,7 @@ public class Attacker : Battler{
 
 
 	}
-	public override void Level(){
-		
-	}
+
 
 	public bool IsEnemy{
 		get{ return isEnemy; }
@@ -29,4 +27,8 @@ public class Attacker : Battler{
 
 
 
+	public void Heal(){
+	}
+	public void Block (){
+	}
 }

@@ -16,8 +16,8 @@ public class Battle : MonoBehaviour {
 	private List<Battler> battlers;
 
 	private List<int> enemyRandomAttacks;
-	private Attacker attacker;
-	private Defender defender;
+	private Battler attacker;
+	private Battler defender;
 	//used to keep track of turns
 
 
@@ -29,17 +29,18 @@ public class Battle : MonoBehaviour {
 
 
 	void Start () {
-	//	battlers = new List<Battler> ();
-		playerChar= new Attacker(false);
-		playerChar.RP = 8;
-		partnerChar.RP = 8;
-		//battlers.Add (playerChar);
-	//	battlers.Add (partnerChar);
-//		battlers.Add (enemy1Char);
-	//	battlers.Add (enemy2Char);
-
-	//	_defender = enemy1Char;
-		attacker = (Attacker)playerChar;
+		battlers = new List<Battler> ();
+		//get these characters from the first scene
+		playerChar= new Player ();
+		partnerChar= new Ally();
+		enemy1Char= new Enemy();
+		enemy2Char = new Enemy ();
+		//playerChar.RP = 8;
+		//partnerChar.RP = 8;
+		battlers.Add (playerChar);
+		battlers.Add (partnerChar);
+		battlers.Add (enemy1Char);
+		battlers.Add (enemy2Char);
 	}
 	public void BattleLoop(){
 
@@ -47,10 +48,7 @@ public class Battle : MonoBehaviour {
 	//attacker.attack
 
 	}
-	public Defender Defender{
-		get{return defender; }
-		set{defender = value;}
-	}
+
 
 	public IEnumerator Fight(string action){
 		status.text = action;
@@ -60,16 +58,15 @@ public class Battle : MonoBehaviour {
 	}
 	public void SwitchAttacker(){
 		if (battleCount == LAST_ATTACKER) {
-			attacker = (Attacker)battlers [1];
 			ui.EnableButtonsForPlayerAttack();
 		}else{
-			Debug.Log (battlers [battleCount]);
-			attacker = (Attacker)battlers[battleCount + 1]; 
+			Debug.Log (battlers [0]);
+			//attacker = (Attacker)battlers[battleCount + 1]; 
 			//attacker.setBlocking(false);
 		}
-		if (attacker.IsEnemy ) {
+		if (battleCount == 2 ) {
 			ui.DisableButtonsForEnemyAttack();
-			attacker.Move();
+			attacker.Attack();
 		}
 	}
 	/*

@@ -1,21 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public abstract class Battler : Character {
-	private bool isAttackable;
+public interface Battler {
+
 
 	//determines action taken during battler's turn
-	public abstract void Move ();
+	void Attack ();
 
-	public void Heal(){
-		if (HP < 10) {
-			//increment HP by two
-		}
-	}
-	public void Block(){
-		if (HP < 10) {
-			//increment HP by two
-		}
-	}
+	void Heal();
+	void Block ();
 
 }
