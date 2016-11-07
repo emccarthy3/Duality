@@ -1,7 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class TeamAttack : MonoBehaviour {
+public class TeamAttack : Moves {
+
+
+	public override void MoveBehavior(){
+		//trigger the team ui
+
+	}
 
 	// Use this for initialization
 	void Start () {

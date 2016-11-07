@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
-public class Enemy : Battler {
+public class Enemy : Character{
 
 
 	// Use this for initialization
@@ -13,7 +14,8 @@ public class Enemy : Battler {
 	void Update () {
 
 	}
-	public void Attack (){
+	public override void Attack (){
+		Debug.Log ("enemy is attacking");
 	}
 
 	public void Heal(){

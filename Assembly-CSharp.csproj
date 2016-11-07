@@ -46,12 +46,9 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Ally.cs" />
-     <Compile Include="Assets\Attacker.cs" />
      <Compile Include="Assets\Battle.cs" />
-     <Compile Include="Assets\Battler.cs" />
      <Compile Include="Assets\Character.cs" />
      <Compile Include="Assets\ClassType.cs" />
-     <Compile Include="Assets\Defender.cs" />
      <Compile Include="Assets\Dialogue.cs" />
      <Compile Include="Assets\Enemy.cs" />
      <Compile Include="Assets\EnemyChooser.cs" />

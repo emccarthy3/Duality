@@ -6,18 +6,18 @@ using System.Collections.Generic;
 public class Battle : MonoBehaviour {
 	int turn = 0;
 
-	private Battler playerChar;
-	private Battler partnerChar;
-	private Battler enemy1Char;
-	private Battler enemy2Char;
+	private Character playerChar;
+	private Character partnerChar;
+	private Character enemy1;
+	private Character enemy2;
 	[SerializeField] private Text status;
 	[SerializeField] private Text currentPlayer;
 	[SerializeField] private UIController ui;
-	private List<Battler> battlers;
+	private List<Character> battlers;
 
 	private List<int> enemyRandomAttacks;
-	private Battler attacker;
-	private Battler defender;
+	private Character attacker;
+	private Character defender;
 	//used to keep track of turns
 
 
@@ -29,21 +29,19 @@ public class Battle : MonoBehaviour {
 
 
 	void Start () {
-		battlers = new List<Battler> ();
+		ui.SetButtonListeners (playerChar);
 		//get these characters from the first scene
 		playerChar= new Player ();
 		partnerChar= new Ally();
-		enemy1Char= new Enemy();
-		enemy2Char = new Enemy ();
+		enemy1= new Enemy();
+		enemy2 = new Enemy ();
 		//playerChar.RP = 8;
 		//partnerChar.RP = 8;
-		battlers.Add (playerChar);
-		battlers.Add (partnerChar);
-		battlers.Add (enemy1Char);
-		battlers.Add (enemy2Char);
 	}
-	public void BattleLoop(){
-
+	public void EnemyAttacks(){
+		enemy1.Attack ();
+		enemy2.Attack ();
+		//ui.EnableButtonsForPlayerAttack
 		//right now gui calls attack
 	//attacker.attack
 
@@ -53,10 +51,9 @@ public class Battle : MonoBehaviour {
 	public IEnumerator Fight(string action){
 		status.text = action;
 		yield return new WaitForSeconds (1);
-		SwitchAttacker();
 		currentPlayer.text = attacker+ "'s turn";
 	}
-	public void SwitchAttacker(){
+/*	public void SwitchAttacker(){
 		if (battleCount == LAST_ATTACKER) {
 			ui.EnableButtonsForPlayerAttack();
 		}else{
@@ -69,6 +66,7 @@ public class Battle : MonoBehaviour {
 			attacker.Attack();
 		}
 	}
+	*/
 	/*
 
 /*	public void SwitchAttacker(){

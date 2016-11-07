@@ -9,15 +9,13 @@ public class UIController : MonoBehaviour {
 	[SerializeField] private Battle battle;
 	[SerializeField] private Button enemy1Button;
 	[SerializeField] private Button enemy2Button;
-	[SerializeField] private Button singleAttack;
-	[SerializeField] private Button heal;
-	[SerializeField] private Button block;
-	[SerializeField] private Button partnerAttack;
+	[SerializeField] private List<Button> moveButtons;
 	[SerializeField] private Text playerHP;
 	[SerializeField] private Text partnerHP;
 	[SerializeField] private Text enemy1HP;
 	[SerializeField] private Text enemy2HP;
 	[SerializeField] private List<Text> hpList;
+	[SerializeField] private Player player;
 
 
 	// Use this for initialization
@@ -32,8 +30,8 @@ public class UIController : MonoBehaviour {
 		partnerHP.text = "Partner HP: " + 10;
 		enemy1HP.text = "Enemy 1 HP: " + 10;
 		enemy2HP.text = "Enemy 2 HP: " + 10;
-		partnerAttack.gameObject.SetActive (false);
-		block.gameObject.SetActive (false);
+	//	partnerAttack.gameObject.SetActive (false);
+	//	block.gameObject.SetActive (false);
 
 	}
 
@@ -56,21 +54,26 @@ public class UIController : MonoBehaviour {
 	//	battle.BattleLoop ();
 		StartCoroutine(battle.Fight("Attacking"));
 
-		battle.BattleLoop ();
+		//battle.BattleLoop ();
 
 		enemyChooser.Close ();
 	}
 	public void DisableButtonsForEnemyAttack(){
-		block.gameObject.SetActive (false);	
-		heal.gameObject.SetActive (false);
-		singleAttack.gameObject.SetActive (false);
-		partnerAttack.gameObject.SetActive (false);
+		foreach(Button button in moveButtons){
+			button.gameObject.SetActive (false);
+		}
 	}
 	public void EnableButtonsForPlayerAttack(){
 		//block.gameObject.SetActive (true);	
-		heal.gameObject.SetActive (true);
-		singleAttack.gameObject.SetActive (true);
+		//heal.gameObject.SetActive (true);
+		//singleAttack.gameObject.SetActive (true);
 		//partnerAttack.gameObject.SetActive (true);
 	}
-		
+	public void SetButtonListeners(Character battler){
+		for (int i = 0; i < moveButtons.Count; i++) {
+			moveButtons [i].onClick.AddListener (() => {
+				battler.Moves [i].MoveBehavior ();
+			});
+		}
+	}
 }
