@@ -10,6 +10,7 @@ public class Battle : MonoBehaviour {
 	private Character partnerChar;
 	private Character enemy1;
 	private Character enemy2;
+	private Moves selectedMove;
 	[SerializeField] private Text status;
 	[SerializeField] private Text currentPlayer;
 	[SerializeField] private UIController ui;
@@ -29,14 +30,16 @@ public class Battle : MonoBehaviour {
 
 
 	void Start () {
-		ui.SetButtonListeners (playerChar);
+		
 		//get these characters from the first scene
 		playerChar= new Player ();
 		partnerChar= new Ally();
 		enemy1= new Enemy();
 		enemy2 = new Enemy ();
+		ui.SetButtonListeners (playerChar);
 		//playerChar.RP = 8;
 		//partnerChar.RP = 8;
+		//ui.SetButtonListeners(playerChar);
 	}
 	public void EnemyAttacks(){
 		enemy1.Attack ();
@@ -49,9 +52,15 @@ public class Battle : MonoBehaviour {
 
 
 	public IEnumerator Fight(string action){
-		status.text = action;
+		status.text = action + SelectedMove;
+		SelectedMove.MoveBehavior ();
 		yield return new WaitForSeconds (1);
 		currentPlayer.text = attacker+ "'s turn";
+	}
+
+	public Moves SelectedMove{
+		get{return selectedMove;}
+		set{ selectedMove = value; }
 	}
 /*	public void SwitchAttacker(){
 		if (battleCount == LAST_ATTACKER) {

@@ -85,11 +85,9 @@
 -define:UNITY_EDITOR_OSX
 -define:UNITY_TEAM_LICENSE
 'Assets/Ally.cs'
-'Assets/Attacker.cs'
 'Assets/Battle.cs'
-'Assets/Battler.cs'
+'Assets/Character.cs'
 'Assets/ClassType.cs'
-'Assets/Defender.cs'
 'Assets/Dialogue.cs'
 'Assets/Enemy.cs'
 'Assets/EnemyChooser.cs'

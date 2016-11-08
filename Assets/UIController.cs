@@ -15,7 +15,7 @@ public class UIController : MonoBehaviour {
 	[SerializeField] private Text enemy1HP;
 	[SerializeField] private Text enemy2HP;
 	[SerializeField] private List<Text> hpList;
-	[SerializeField] private Player player;
+	private Player player;
 
 
 	// Use this for initialization
@@ -41,7 +41,7 @@ public class UIController : MonoBehaviour {
 	public void Close(){
 		
 	}
-	public void OnAttackSelect(){
+	public void OnAttackSelect(Moves move){
 		enemyChooser.Open ();
 	}
 	public void UpdateHPLabels(string name,int index,int hp){
@@ -72,7 +72,10 @@ public class UIController : MonoBehaviour {
 	public void SetButtonListeners(Character battler){
 		for (int i = 0; i < moveButtons.Count; i++) {
 			moveButtons [i].onClick.AddListener (() => {
-				battler.Moves [i].MoveBehavior ();
+			//	battler.Moves [i].MoveBehavior (); 
+				battle.SelectedMove = battler.Moves[i];
+				OnAttackSelect(battler.Moves[i]);
+			//	OnAttackSelect(new SingleAttack());
 			});
 		}
 	}

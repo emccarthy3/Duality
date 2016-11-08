@@ -5,6 +5,8 @@ using System.Collections;
 public abstract class Moves {
 	private int baseDamage;
 
+
+
 	public int BaseDamage {
 		get{return baseDamage;}
 		set{ baseDamage = value; }
@@ -21,15 +23,5 @@ public abstract class Moves {
 
 	public abstract void MoveBehavior();
 
-
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
 
 }

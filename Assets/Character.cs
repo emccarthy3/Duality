@@ -2,12 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public abstract class Character{
+public abstract class Character: MonoBehaviour{
 	private const int STARTING_HP = 10;
 	private int hp;
 	private int rp;
 	private int level;
 	private int personalityType;
+	private List<Moves> moves;
 	private ClassType classType;
 
 
@@ -18,8 +19,8 @@ public abstract class Character{
 
 	//the list of moves the battler has
 	public List<Moves> Moves {
-		get;
-		set;
+		get{ return moves; }
+		set{ moves = value; }
 
 	}
 	//the classtype of the battler (either warrior, mage, or ranger)
