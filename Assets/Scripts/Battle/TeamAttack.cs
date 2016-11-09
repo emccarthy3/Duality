@@ -5,16 +5,18 @@ using UnityEngine.SceneManagement;
 public class TeamAttack : Action {
 	private int baseDamage;
 	private string name;
-
+	private NoteScript notes;
 	public TeamAttack(string name, int baseDamage){
 		Name = name;
 		BaseDamage = BaseDamage;
+		notes = new NoteScript ();
 	}
 
 	public override void ActionBehavior(){
 		//trigger the team ui
 		SceneManager.LoadScene("RhythmScene2D");
-
+		BaseDamage = notes.Score;
+		Debug.Log ("Score" + BaseDamage);
 	}
 
 	// Use this for initialization

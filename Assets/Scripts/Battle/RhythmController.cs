@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class RhythmController : MonoBehaviour {
 
@@ -30,6 +31,9 @@ public class RhythmController : MonoBehaviour {
 			hasBegun = "y";
 
 		}
+		if (whichDir >= lrud.Count) {
+			SceneManager.LoadScene ("newBattle");
+		}
 	}
 
 	// instantiates notes in the correct position on thet background
@@ -52,6 +56,7 @@ public class RhythmController : MonoBehaviour {
 		}
 		whichDir += 1;
 		hasBegun = "n";
+
 		Instantiate (note, new Vector3(xPos, 6.0f, -1f), note.rotation); 
 	}
 }

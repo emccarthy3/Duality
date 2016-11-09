@@ -2,10 +2,11 @@
 -target:library
 -nowarn:0169
 -out:'Temp/Assembly-CSharp.dll'
--r:'/Applications/Unity/Unity.app/Contents/PlaybackEngines/MacStandaloneSupport/Managed/UnityEngine.dll'
+-r:'/Applications/Unity/Unity.app/Contents/Managed/UnityEngine.dll'
 -r:'/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/UnityAnalytics/UnityEngine.Analytics.dll'
--r:'/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/Networking/Standalone/UnityEngine.Networking.dll'
--r:'/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/GUISystem/Standalone/UnityEngine.UI.dll'
+-r:'/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll'
+-r:'/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll'
+-r:'/Applications/Unity/Unity.app/Contents/Managed/UnityEditor.dll'
 -define:UNITY_5_3_OR_NEWER
 -define:UNITY_5_4_OR_NEWER
 -define:UNITY_5_4_2
@@ -75,6 +76,15 @@
 -define:ENABLE_CLUSTERINPUT
 -define:ENABLE_WEBSOCKET_HOST
 -define:ENABLE_MONO
+-define:ENABLE_PROFILER
+-define:DEBUG
+-define:TRACE
+-define:UNITY_ASSERTIONS
+-define:UNITY_EDITOR
+-define:UNITY_EDITOR_64
+-define:UNITY_EDITOR_OSX
+-define:UNITY_TEAM_LICENSE
+'Assets/Scripts/Battle/Action.cs'
 'Assets/Scripts/Battle/Ally.cs'
 'Assets/Scripts/Battle/Battle.cs'
 'Assets/Scripts/Battle/Character.cs'
@@ -85,7 +95,6 @@
 'Assets/Scripts/Battle/KeyRecognizer.cs'
 'Assets/Scripts/Battle/Magician.cs'
 'Assets/Scripts/Battle/MoveChooser.cs'
-'Assets/Scripts/Battle/Moves.cs'
 'Assets/Scripts/Battle/NoteScript.cs'
 'Assets/Scripts/Battle/Player.cs'
 'Assets/Scripts/Battle/Ranger.cs'
@@ -95,6 +104,7 @@
 'Assets/Scripts/Battle/UIController.cs'
 'Assets/Scripts/Battle/Warrior.cs'
 'Assets/Scripts/Dialogue/YesNoDialogue.cs'
+'Assets/Scripts/GameController.cs'
 'Assets/Scripts/Quiz/Quiz.cs'
 'Assets/Scripts/RPG.cs'
 -r:'/Applications/Unity/Unity.app/Contents/Mono/lib/mono/unity/System.Runtime.Serialization.dll'

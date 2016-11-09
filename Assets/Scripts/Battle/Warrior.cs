@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
+//defines warrior class
 public class Warrior : ClassType {
 
 	public Warrior(Character warrior){

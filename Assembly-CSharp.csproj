@@ -65,6 +65,7 @@
      <Compile Include="Assets\Scripts\Battle\UIController.cs" />
      <Compile Include="Assets\Scripts\Battle\Warrior.cs" />
      <Compile Include="Assets\Scripts\Dialogue\YesNoDialogue.cs" />
+     <Compile Include="Assets\Scripts\GameController.cs" />
      <Compile Include="Assets\Scripts\Quiz\Quiz.cs" />
      <Compile Include="Assets\Scripts\RPG.cs" />
  <Reference Include="UnityEngine.Analytics">

@@ -104,6 +104,7 @@
 'Assets/Scripts/Battle/UIController.cs'
 'Assets/Scripts/Battle/Warrior.cs'
 'Assets/Scripts/Dialogue/YesNoDialogue.cs'
+'Assets/Scripts/GameController.cs'
 'Assets/Scripts/Quiz/Quiz.cs'
 'Assets/Scripts/RPG.cs'
 -r:'/Applications/Unity/Unity.app/Contents/Mono/lib/mono/unity/System.Runtime.Serialization.dll'

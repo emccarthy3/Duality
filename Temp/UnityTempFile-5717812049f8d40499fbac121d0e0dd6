@@ -84,6 +84,7 @@
 -define:UNITY_EDITOR_64
 -define:UNITY_EDITOR_OSX
 -define:UNITY_TEAM_LICENSE
+'Assets/Scripts/Battle/Action.cs'
 'Assets/Scripts/Battle/Ally.cs'
 'Assets/Scripts/Battle/Battle.cs'
 'Assets/Scripts/Battle/Character.cs'
@@ -94,7 +95,6 @@
 'Assets/Scripts/Battle/KeyRecognizer.cs'
 'Assets/Scripts/Battle/Magician.cs'
 'Assets/Scripts/Battle/MoveChooser.cs'
-'Assets/Scripts/Battle/Moves.cs'
 'Assets/Scripts/Battle/NoteScript.cs'
 'Assets/Scripts/Battle/Player.cs'
 'Assets/Scripts/Battle/Ranger.cs'
@@ -104,6 +104,7 @@
 'Assets/Scripts/Battle/UIController.cs'
 'Assets/Scripts/Battle/Warrior.cs'
 'Assets/Scripts/Dialogue/YesNoDialogue.cs'
+'Assets/Scripts/GameController.cs'
 'Assets/Scripts/Quiz/Quiz.cs'
 'Assets/Scripts/RPG.cs'
 -r:'/Applications/Unity/Unity.app/Contents/Mono/lib/mono/unity/System.Runtime.Serialization.dll'

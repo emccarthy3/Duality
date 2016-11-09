@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class Quiz : MonoBehaviour {
-
+	[SerializeField] private Button endButton;
 	//i is what question the player is on
 	private int i = 0;
 	private string[] questions = {"Do you like to gamble?",
@@ -16,12 +17,14 @@ public class Quiz : MonoBehaviour {
 		"Do you prefer travelling for vacation over staying at home?"
 	};
 	private Text question;
-
+	private bool isFinished;
 	//
 	private double score = 0;
 
 	// Use this for initialization
-	void Start () {
+	void Start() {
+		endButton.gameObject.SetActive (false);
+		isFinished = false;
 		//loads the question to the panel
 		GameObject textObject = GameObject.Find ("QuizQuestion");
 		question = textObject.GetComponent<Text> ();
@@ -41,6 +44,7 @@ public class Quiz : MonoBehaviour {
 			} else {
 				question.text = "Congratulations! You are a wizard!";
 			}
+			endButton.gameObject.SetActive (true);
 		}
 	}
 
@@ -67,5 +71,11 @@ public class Quiz : MonoBehaviour {
 		Debug.Log ("Increase score by 1");
 
 	}
-
+	public bool IsFinished{
+		get{ return isFinished; }
+		set{ isFinished = value; }
+	}
+	public void SwitchScenes(){
+		SceneManager.LoadScene ("Dialogue1");
+	}
 }

@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
-public class YesNoDialogue : MonoBehaviour
+public class YesNoDialogue : MonoBehaviour 
 {
+	[SerializeField] private Button endButton;
 	//i is what question the player is on
 	private int i = 0;
 	private string[] questions = {"Do you like the color orange?",
@@ -18,7 +20,8 @@ public class YesNoDialogue : MonoBehaviour
 	private Text question;
 
 	// Use this for initialization
-	void Start () {
+	void Start() {
+		endButton.gameObject.SetActive (false);
 		GameObject textObject = GameObject.Find ("Question");
 		question = textObject.GetComponent<Text> ();
 		question.text = questions [i]; 
@@ -28,6 +31,7 @@ public class YesNoDialogue : MonoBehaviour
 	void Update () {
 		if (i == questions.Length) {
 			question.text = "All done!";
+			endButton.gameObject.SetActive (true);
 		}
 	}
 
@@ -45,7 +49,9 @@ public class YesNoDialogue : MonoBehaviour
 		Debug.Log ("Decrease RP by 1");
 
 	}
-
+	public void SwitchScenes(){
+		SceneManager.LoadScene ("newBattle");
+	}
 
 }
 

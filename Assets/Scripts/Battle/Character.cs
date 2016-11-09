@@ -56,9 +56,10 @@ public class Character: MonoBehaviour{
 		set{personalityType =value;}
 	}
 
-	//Determines the next player - allows for turn based combat
+/*	//Determines the next player - allows for turn based combat
 	public Character NextPlayer{
 		get{ return nextPlayer; }
 		set{ nextPlayer = value; }
 	}
+	*/
 }
