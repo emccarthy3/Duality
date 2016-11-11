@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Character: MonoBehaviour{
+public class Character{
 	private const int STARTING_HP = 10;
 	private int hp;
 	private int rp;
@@ -27,8 +27,7 @@ public class Character: MonoBehaviour{
 	}
 	//property for the level of the character.  This determines the stats of the player, the moves the player can have as well as the character stats
 	public int Level {
-		get{ return level; }
-	
+		get{ return level; }	
 		set{ level = value; }
 	}
 	//property for health points of characters.  Health points increase for the player and the ally during level ups and increase for enemies in between battles
@@ -55,11 +54,5 @@ public class Character: MonoBehaviour{
 		get{ return personalityType; }
 		set{personalityType =value;}
 	}
-
-/*	//Determines the next player - allows for turn based combat
-	public Character NextPlayer{
-		get{ return nextPlayer; }
-		set{ nextPlayer = value; }
-	}
-	*/
+		
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 //defines Enemy based on personality type for choosing class type
 public class Enemy : Character{
+	//use a hashmap instead here
 
 	private const int WARRIOR = 1;
 	private const int MAGICIAN = 2;

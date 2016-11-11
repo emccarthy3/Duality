@@ -38,6 +38,7 @@ public class UIController : MonoBehaviour {
 
 	//when a move is chosen by the player, another window will be displayed to show which enemy to use the attack on
 	public void OnAttackSelect(Action action){
+		Debug.Log (action.Name + "Action name");
 		enemyChooser.Open ();
 	}
 
@@ -71,25 +72,40 @@ public class UIController : MonoBehaviour {
 	//sets listeners for move buttons to perform move assigned to them according to the list of moves the character currently has. 
 	public void SetButtonListeners(Character battler){
 		//loop gives index out of bound error?
-		for (int i = 0; i < moveButtons.Count; i++) {
+		//Debug.Log (moveButtons.Count + "Move buttons count");
+		//Debug.Log (battler.Actions.Count + "Battler count");
+		//Debug.Log(moveButtons.Count + "Move buttons count");
+		int i = 0;
+		foreach (Button button in moveButtons) { 
+			//Debug.Log ("i is " + i);
+			//for (int i = 0; i < moveButtons.Count; i++) {
+			/*button.onClick.AddListener (() => {
+				battle.SelectedAction = battler.Actions [i];
+				OnAttackSelect (battler.Actions [i]);
+			});
+			*/
 			moveButtons [i].GetComponentInChildren<Text> ().text = battler.Actions[i].Name;
+			//moveButtons[i].onClick.AddListener(() => { battle.SelectedAction = battler.Actions[i];
+			//	OnAttackSelect(battler.Actions[i]);});
+			i++;
 		}
 			
 		moveButtons [0].onClick.AddListener (() => {
-			battle.SelectedAction = battler.Actions[0];
-			OnAttackSelect(battler.Actions[0]);
+			battle.SelectedAction = battler.Actions [0];
+			OnAttackSelect (battler.Actions [0]);
 		});
 		moveButtons [1].onClick.AddListener (() => {
-			battle.SelectedAction = battler.Actions[1];
-			OnAttackSelect(battler.Actions[1]);
+			battle.SelectedAction = battler.Actions [1];
+			OnAttackSelect (battler.Actions [1]);
 		});
 		moveButtons [2].onClick.AddListener (() => {
-			battle.SelectedAction = battler.Actions[2];
-			OnAttackSelect(battler.Actions[2]);
+			battle.SelectedAction = battler.Actions [2];
+			OnAttackSelect (battler.Actions [2]);
 		});
 		moveButtons [3].onClick.AddListener (() => {
-			battle.SelectedAction = battler.Actions[3];
-			OnAttackSelect(battler.Actions[3]);
+			battle.SelectedAction = battler.Actions [3];
+			OnAttackSelect (battler.Actions [3]);
 		});
 	}
+
 }

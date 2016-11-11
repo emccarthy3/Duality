@@ -25,4 +25,8 @@ public class Player : Character{
 		Name = "player";
 	}
 
+	public void printMe(){
+		Debug.Log ("I'm a " + this.Name);
+	}
+
 }

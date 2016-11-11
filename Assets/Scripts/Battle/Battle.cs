@@ -5,8 +5,8 @@ using System.Collections.Generic;
 
 //Class for  controlling the battle.  Written by: Betsey
 public class Battle : MonoBehaviour{
-	private Player playerChar;
-	private Ally partnerChar;
+	private Character playerChar;
+	private Character partnerChar;
 	private Enemy enemy1;
 	private Enemy enemy2;
 	private Action selectedAction;
@@ -17,16 +17,24 @@ public class Battle : MonoBehaviour{
 	private List<int> enemyRandomAttacks;
 	private Character attacker;
 	private Character defender;
-	private const int FINAL_PLAYER = 1;
+	private int attackerIndex = 0;
+	private const int FINAL_PLAYER = 2;
 
 	//initializes battle.  Having issues with turn based combat.  Want to use a List of battlers but getting null when casting players to Character
 	void Start(){
+		battlers = new List<Character> ();
+		Debug.Log ("Start in Battle");
 		playerChar= new Player (1);
 		partnerChar= new Ally(2);
+		partnerChar.Name = "Bch";
 		partnerChar.PersonalityType = 8;
 		enemy1= new Enemy(3);
 		enemy2 = new Enemy (1);
 		ui.SetButtonListeners (playerChar);
+		battlers.Add (playerChar);
+		battlers.Add (partnerChar);
+		battlers.Add (enemy1);
+		battlers.Add (enemy2);
 		attacker = playerChar;
 		Debug.Log ("attacker" + attacker);
 	}
@@ -74,18 +82,19 @@ public class Battle : MonoBehaviour{
 	}
 	//allows for turn based attack system. Want this to go through a loop of battlers
 	public void SwitchAttacker(){
-	//	attacker = playerChar.NextPlayer;
-	
-	//	Debug.Log ("New Attacker! " + attacker.Name);
-		/*if (attackerIndex == FINAL_PLAYER) {
+
+		attackerIndex++;
+
+		if (attackerIndex == FINAL_PLAYER) {
 			ui.DisableButtonsForEnemyAttack ();
 			EnemyAttacks ();
 		}
 		else{
 			ui.SetButtonListeners (battlers [attackerIndex]);
+			attacker = battlers[attackerIndex];
+			Debug.Log ("New Attacker! " + attacker.Name);
 	}
-		attackerIndex++;
-		*/
+	
 
 }
 }
