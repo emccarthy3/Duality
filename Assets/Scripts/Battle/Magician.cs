@@ -5,12 +5,12 @@ using System.Collections.Generic;
 public class Magician : ClassType {
 	public Dictionary<string, double> classEffectiveness;
 
-	public Magician(Character magician){
+	public Magician(){
 		ClassName = "Magician";
-		magician.Actions = DefaultActions();
+		Actions = DefaultActions();
 	}
-		
-		
+
+
 	public List<Action> DefaultActions(){
 		List<Action> defaultActions = new List<Action>();
 		defaultActions.Add (new SingleAttack ("Fire bolt", 1));

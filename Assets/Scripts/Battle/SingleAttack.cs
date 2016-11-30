@@ -14,7 +14,7 @@ public class SingleAttack : Action{
 
 	public override void ActionBehavior ()
 	{
-		Debug.Log ("single attack!");
+		//no additional behavior for singleAttack
 	}
 
 

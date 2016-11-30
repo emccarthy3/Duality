@@ -1,19 +1,26 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
+//this class is used to save character data between scene switches.  An object called GameController with this script attached is in every scene
 public class GameController : MonoBehaviour {
-	private Quiz quiz;
+	private Player yourPlayer;
+	private Ally yourPartner;
+
 	// Use this for initialization
 	void Start () {
-		SceneManager.LoadScene ("Quiz");
+		//ensures the object's data is not erased between scenes
+		DontDestroyOnLoad (this);
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		if (quiz.IsFinished == true) {
-			SceneManager.LoadScene ("Dialogue1");
-			quiz.IsFinished = false;
-		}
+		
+	public Player YourPlayer{
+		get{ return yourPlayer; }
+		set{ yourPlayer = value; }
 	}
+	public Ally YourPartner{
+		get{ return yourPartner; }
+		set{ yourPartner = value; }
+	}
+
 }

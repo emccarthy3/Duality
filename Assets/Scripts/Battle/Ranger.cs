@@ -4,10 +4,9 @@ using System.Collections.Generic;
 
 public class Ranger : ClassType {
 
-	public Ranger(Character ranger){
+	public Ranger(){
 		ClassName = "Ranger";
-		ranger.Actions = DefaultActions();
-
+		Actions = DefaultActions();
 	}
 
 	public List<Action> DefaultActions(){

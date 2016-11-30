@@ -10,53 +10,81 @@ using System.Collections.Generic;
  */
 
 public class UIController : MonoBehaviour {
+	private GameObject gc;
+	private GameController gameController;
 	[SerializeField] private EnemyChooser enemyChooser;
 	[SerializeField] private MoveChooser moveChooser;
+	[SerializeField] private TeamAttackChooser teamAttackChooser;
 	[SerializeField] private Battle battle;
 	[SerializeField] private Button enemy1Button;
 	[SerializeField] private Button enemy2Button;
+	[SerializeField] private Button teamEnemy1Button;
+	[SerializeField] private Button teamEnemy2Button;
 	[SerializeField] private List<Button> moveButtons;
 	[SerializeField] private Text playerHP;
 	[SerializeField] private Text partnerHP;
 	[SerializeField] private Text enemy1HP;
 	[SerializeField] private Text enemy2HP;
 	[SerializeField] private List<Text> hpList;
-	[SerializeField] private Canvas canvas;
+	private Character enemy;
+
 	private Player player;
 
 
 	// Initializes UI for battle, starts with a UI for the character to choose their first move.
 	void Start () {
+		enemy = new Character ();
+		gc = GameObject.Find ("GameController");
+		gameController= gc.GetComponent <GameController> ();
 		enemyChooser.Close ();
+		teamAttackChooser.Close ();
 		moveChooser.Open ();
 		enemy1Button.onClick.AddListener(() =>  OnEnemySelect(battle.Enemy1));
 		enemy2Button.onClick.AddListener(() =>  OnEnemySelect(battle.Enemy2));
-		playerHP.text = "Player HP: " + 10;
-		partnerHP.text = "Partner HP: " + 10;
-		enemy1HP.text = "Enemy 1 HP: " + 10;
-		enemy2HP.text = "Enemy 2 HP: " + 10;
-
-		//!!!!!!! change this when the team attack is selected so the team attack can happen
-		//canvas.enabled = false;
+		teamEnemy1Button.onClick.AddListener(() =>  OnTeamAttackSelect(battle.Enemy1));
+		teamEnemy2Button.onClick.AddListener(() =>  OnTeamAttackSelect(battle.Enemy2));
+		playerHP.text = "Player HP: " + gameController.YourPlayer.HP;
+		partnerHP.text = "Partner HP: " + gameController.YourPartner.HP;
+		enemy1HP.text = "Enemy 1 HP: " + battle.Enemy1.HP;
+		enemy2HP.text = "Enemy 2 HP: " + battle.Enemy2.HP;
 	}
 
 	//when a move is chosen by the player, another window will be displayed to show which enemy to use the attack on
 	public void OnAttackSelect(Action action){
-		enemyChooser.Open ();
+		if (action.GetType().Name == "SingleAttack") {
+			enemyChooser.Open ();
+		}
+		else if (action.GetType().Name == "TeamAttack") {
+			teamAttackChooser.Open ();
+		}
 	}
 
 	//this method updates the HP levels once a value has changed either from an attack or heal move.
 	public void UpdateHPLabels(string name,int index,double hp){
 		hpList [index].text = name + " HP: " + hp;
-		
+
 	}
 
 	//once the enemy to attack is chosen through the enemy chooser display, the attack move will be carried out.
 	public void OnEnemySelect(Character enemy){
+		this.enemy = enemy;
 		StartCoroutine(battle.Fight(enemy));
 		enemyChooser.Close ();
+		//do this differently for team attack
+	}
+	public void OnTeamAttackSelect(Character enemy){
+		GameObject rc = GameObject.Find ("RhythmController");
+		RhythmController rhythmController = rc.GetComponent <RhythmController> ();
+		teamAttackChooser.Close ();
+		ChangeCanvasState (false);
+		rhythmController.Work();
 	}
 
+	public void teamAttackisFinished(int score){
+		enemy.HP -= score;
+		UpdateHPLabels ("Enemy", 3, enemy.HP);
+		battle.SwitchAttacker ();
+	}
 	//this method makes the character move buttons temporarily disabled so the player cannot move while the enemy is moving.
 	public void ChangeButtonVisibility(bool isPlayerTurn){
 		foreach(Button button in moveButtons){
@@ -79,28 +107,41 @@ public class UIController : MonoBehaviour {
 				OnAttackSelect (battler.Actions [i]);
 			});
 			*/
-			moveButtons [i].GetComponentInChildren<Text> ().text = battler.Actions[i].Name;
+			moveButtons [i].GetComponentInChildren<Text> ().text = battler.Type.Actions[i].Name;
 			//moveButtons[i].onClick.AddListener(() => { battle.SelectedAction = battler.Actions[i];
 			//	OnAttackSelect(battler.Actions[i]);});
 			i++;
 		}
-			
+
 		moveButtons [0].onClick.AddListener (() => {
-			battle.SelectedAction = battler.Actions [0];
-			OnAttackSelect (battler.Actions [0]);
+			battle.SelectedAction = battler.Type.Actions [0];
+			OnAttackSelect (battler.Type.Actions [0]);
 		});
 		moveButtons [1].onClick.AddListener (() => {
-			battle.SelectedAction = battler.Actions [1];
-			OnAttackSelect (battler.Actions [1]);
+			battle.SelectedAction = battler.Type.Actions [1];
+			OnAttackSelect (battler.Type.Actions [1]);
 		});
 		moveButtons [2].onClick.AddListener (() => {
-			battle.SelectedAction = battler.Actions [2];
-			OnAttackSelect (battler.Actions [2]);
+			battle.SelectedAction = battler.Type.Actions [2];
+			OnAttackSelect (battler.Type.Actions [2]);
 		});
 		moveButtons [3].onClick.AddListener (() => {
-			battle.SelectedAction = battler.Actions [3];
-			OnAttackSelect (battler.Actions [3]);
+			battle.SelectedAction = battler.Type.Actions [3];
+			OnAttackSelect (battler.Type.Actions [3]);
 		});
+	}
+	public void RemoveFromHPList(int index){
+		hpList [index].text = "Defeated!";
+		hpList.RemoveAt (index);
+	}
+
+	public void ChangeCanvasState(bool state){
+		GameObject c = GameObject.Find ("Canvas");
+		Canvas canvas = c.GetComponent <Canvas> ();
+		canvas.enabled = state;
+
+
 	}
 
 }
+

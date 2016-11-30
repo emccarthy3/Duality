@@ -1,10 +1,14 @@
 ﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
 //Class for  controlling the battle.  Written by: Betsey
-public class Battle : MonoBehaviour{
+using UnityEngine.SceneManagement;
+
+
+public class Battle : State{
 	private Character playerChar;
 	private Character partnerChar;
 	private Enemy enemy1;
@@ -14,45 +18,61 @@ public class Battle : MonoBehaviour{
 	[SerializeField] private Text currentPlayer;
 	[SerializeField] private UIController ui;
 	private List<Character> battlers;
+	private List<Character> yourTeam;
 	private List<int> enemyRandomAttacks;
 	private Character attacker;
 	private Character defender;
 	private int attackerIndex = 0;
+	private GameObject gc;
+	private GameController gameController;
 	private const int FINAL_PLAYER = 2;
-	private const int FINAL_ENEMY = 3;
+	private const int FINAL_ENEMY = 4;
 
-	//initializes battle.  Having issues with turn based combat.  Want to use a List of battlers but getting null when casting players to Character
-	void Start(){
+
+	//initializes battle. 
+	public override void Start(){
+		gc = GameObject.Find ("GameController");
+		gameController= gc.GetComponent <GameController> ();
 		battlers = new List<Character> ();
-		playerChar= new Player (1);
-		partnerChar= new Ally(2);
-		partnerChar.Name = "Betsey";
-		partnerChar.RP = 8;
-		enemy1= new Enemy(3);
-		enemy2 = new Enemy (1);
+		yourTeam = new List<Character> ();
+		playerChar = gameController.YourPlayer;
+		Debug.Log(playerChar.HP + "Player hp");
+		partnerChar = gameController.YourPartner;
+		status.text = "RP: " + playerChar.RP;
+		enemy1= new Enemy(new Ranger());
+		enemy2 = new Enemy (new Warrior());
 		ui.SetButtonListeners (playerChar);
 		battlers.Add (playerChar);
 		battlers.Add (partnerChar);
 		battlers.Add (enemy1);
 		battlers.Add (enemy2);
+		yourTeam.Add (playerChar);
+		yourTeam.Add (partnerChar);
 		attacker = playerChar;
 	}
 
+	public override void Update(){
+		if (!battlers.Contains (enemy1) && !battlers.Contains (enemy2)) {
+			SceneManager.LoadScene ("Dialogue1");
+		}
+	}
 	// Method to trigger enemy attacks after both player characters attack.  will implement AI
 	public void EnemyAttacks(){
-		Debug.Log (playerChar);
-		SelectedAction = enemy1.Actions[0];
-		StartCoroutine(Fight (playerChar));
+		SelectedAction = enemy1.Type.Actions[0];
+		StartCoroutine(Fight (yourTeam[Random.Range(0,2)]));
 	}
 
 	// Performs fighting moves (will use animation) when chosen.  Puts a delay between action selected and the move performing for a more natural feel
 	public IEnumerator Fight(Character defender){
-		
-		status.text = attacker +  "" + SelectedAction;
 		DealDamage (defender);
 		ui.UpdateHPLabels (defender.Name, battlers.IndexOf(defender), defender.HP);
 		selectedAction.ActionBehavior ();
 		yield return new WaitForSeconds (1);
+		if (defender.HP <= 0) {
+			ui.RemoveFromHPList (battlers.IndexOf (defender));
+			battlers.Remove (defender);
+			Debug.Log (defender.Name + " Was defeated !!!");
+		}
 		SwitchAttacker ();
 
 	}
@@ -82,22 +102,24 @@ public class Battle : MonoBehaviour{
 	//allows for turn based attack system. Want this to go through a loop of battlers
 	public void SwitchAttacker(){
 		attackerIndex++;
+		if (attackerIndex > battlers.Count-1) {
+			attackerIndex = 0;
+			ui.ChangeButtonVisibility (true);
+		}
 		attacker = battlers [attackerIndex];
-		currentPlayer.text = attacker.Name + "'s turn";
-		if (attackerIndex >= FINAL_PLAYER && attackerIndex < FINAL_ENEMY) {			
-			Debug.Log ("ENEMY IS ATTACKING NOW ");
+		if (attacker.GetType ().Name == "Enemy") {			
 			ui.ChangeButtonVisibility (false);
 			EnemyAttacks ();
-	
-		} else {
-			ui.ChangeButtonVisibility (true);
-			ui.SetButtonListeners (battlers [attackerIndex]);
-			attacker = battlers [attackerIndex];
-
-			ui.SetButtonListeners (battlers [attackerIndex]);
 		}
+		ui.SetButtonListeners (battlers [attackerIndex]);
+		attacker = battlers [attackerIndex];
+		currentPlayer.text = attacker.Name + "'s turn";
+
 	}
-	
+
+	public int GetIndex(Character battler){
+		return battlers.IndexOf (battler);
+	}
+
 
 }
-

@@ -5,14 +5,12 @@ using System.Collections.Generic;
 //defines your player character.
 public class Player : Character{
 
-//Constructor for creating player by passing a personality type
-	public Player(int personalityType){
-		Debug.Log (personalityType + "Personality type");
+	//Constructor for creating player by passing a personality type
+	public Player(ClassType type){
 		Level = 0;
 		HP = 10;
-		GetClassTypeFromHashtable (personalityType);
-		Debug.Log ("Move 1 " + Actions[0].Name);
-		Debug.Log ("PLayer contrstcurotr class typesss ! ! :D " + Type);
+		RP = 5;
+		Type = type;
 		Name = "player";
 	}
 }

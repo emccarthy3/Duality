@@ -8,17 +8,10 @@ public class Character{
 	private int rp;
 	private int level;
 	private string name;
-	private List<Action> actions;
 	private ClassType type;
 	private Character nextPlayer;
 	private Dictionary<int, ClassType> classTypesToPersonality;
 
-	//the list of moves the battler has
-	public List<Action> Actions {
-		get{ return actions; }
-		set{ actions = value; }
-
-	}
 	//the classtype of the battler (either warrior, mage, or ranger)
 	public ClassType Type {
 		get{ return type; }
@@ -46,13 +39,4 @@ public class Character{
 		get{ return rp; }
 		set{ rp = value; }
 	}
-
-	public void GetClassTypeFromHashtable(int personality){
-		classTypesToPersonality = new Dictionary<int, ClassType> ();
-		classTypesToPersonality.Add (1, new Warrior (this));
-		classTypesToPersonality.Add (2, new Magician (this));
-		classTypesToPersonality.Add (3, new Ranger (this));
-		Type = classTypesToPersonality[personality];
-	}
-		
 }

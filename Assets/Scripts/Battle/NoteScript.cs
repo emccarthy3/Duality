@@ -5,6 +5,7 @@ public class NoteScript : MonoBehaviour {
 
 	// the total of the points
 	private int score;
+	[SerializeField] private RhythmController rc;
 
 	void OnTriggerEnter2D (Collider2D col) {
 		// if the note hits the nozone, it is a missed note
@@ -16,10 +17,7 @@ public class NoteScript : MonoBehaviour {
 		// if the note hits the arrow and it's trigger is on, you get the point!
 		if (col.gameObject.tag == "arrow" && (col.gameObject.GetComponent(typeof(Collider2D)) as Collider2D).isTrigger == true) {
 			Destroy (this.gameObject);
-			//Debug.Log ("point");
-			score++;
-
-
+			rc.Score += 1;
 		}
 	
 	}

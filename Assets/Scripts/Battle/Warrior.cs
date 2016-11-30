@@ -4,11 +4,10 @@ using System.Collections.Generic;
 
 //defines warrior class
 public class Warrior : ClassType {
-	
-	public Warrior(Character warrior){
+
+	public Warrior(){
 		ClassName = "Warrior";
-		warrior.Actions = DefaultActions();
-		Debug.Log("should have warrior actions" + warrior.Actions[0].Name);
+		Actions = DefaultActions();
 	}
 
 	public List<Action> DefaultActions(){
