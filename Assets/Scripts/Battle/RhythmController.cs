@@ -59,6 +59,8 @@ public class RhythmController : MonoBehaviour {
 			UIController uiController = uic.GetComponent <UIController> ();
 			uiController.teamAttackisFinished (score);
 			uiController.ChangeCanvasState (true);
+			whichDir = 0;
+			score = 0;
 		}
 		else{
 		hasBegun = "n";	

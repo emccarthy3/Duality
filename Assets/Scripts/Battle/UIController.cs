@@ -67,12 +67,13 @@ public class UIController : MonoBehaviour {
 
 	//once the enemy to attack is chosen through the enemy chooser display, the attack move will be carried out.
 	public void OnEnemySelect(Character enemy){
-		this.enemy = enemy;
 		StartCoroutine(battle.Fight(enemy));
 		enemyChooser.Close ();
-		//do this differently for team attack
 	}
+
+	//when a team attack is selected, a UI will appear to do the rhthym minigame
 	public void OnTeamAttackSelect(Character enemy){
+		battle.Defender = enemy;
 		GameObject rc = GameObject.Find ("RhythmController");
 		RhythmController rhythmController = rc.GetComponent <RhythmController> ();
 		teamAttackChooser.Close ();
@@ -81,10 +82,10 @@ public class UIController : MonoBehaviour {
 	}
 
 	public void teamAttackisFinished(int score){
-		enemy.HP -= score;
-		UpdateHPLabels ("Enemy", 3, enemy.HP);
-		battle.SwitchAttacker ();
+		battle.DoTeamAttack (score);
 	}
+
+
 	//this method makes the character move buttons temporarily disabled so the player cannot move while the enemy is moving.
 	public void ChangeButtonVisibility(bool isPlayerTurn){
 		foreach(Button button in moveButtons){

@@ -51,6 +51,7 @@ public class Battle : State{
 		attacker = playerChar;
 	}
 
+	//checks to see if both enemies were defeated and will load the next scene if true
 	public override void Update(){
 		if (!battlers.Contains (enemy1) && !battlers.Contains (enemy2)) {
 			SceneManager.LoadScene ("Dialogue1");
@@ -61,22 +62,29 @@ public class Battle : State{
 		SelectedAction = enemy1.Type.Actions[0];
 		StartCoroutine(Fight (yourTeam[Random.Range(0,2)]));
 	}
-
+	public void DoTeamAttack(int damage){
+		defender.HP -= damage;
+		ui.UpdateHPLabels (defender.Name, battlers.IndexOf(defender), defender.HP);
+		CheckIfDefeated ();
+	}
 	// Performs fighting moves (will use animation) when chosen.  Puts a delay between action selected and the move performing for a more natural feel
 	public IEnumerator Fight(Character defender){
+		this.defender = defender;
 		DealDamage (defender);
 		ui.UpdateHPLabels (defender.Name, battlers.IndexOf(defender), defender.HP);
 		selectedAction.ActionBehavior ();
+		CheckIfDefeated ();
 		yield return new WaitForSeconds (1);
+
+	}
+	//this method will check whether or not the defender was defeated in battle. If the defender was defeated, the UI will update accordingly and the battler will be taken out of the battler list
+	public void CheckIfDefeated(){
 		if (defender.HP <= 0) {
 			ui.RemoveFromHPList (battlers.IndexOf (defender));
 			battlers.Remove (defender);
-			Debug.Log (defender.Name + " Was defeated !!!");
 		}
-		SwitchAttacker ();
-
-	}
-
+			SwitchAttacker ();
+		}
 	//property for setting/getting the move selected for the current turn
 	public Action SelectedAction{
 		get{return selectedAction;}
@@ -98,6 +106,10 @@ public class Battle : State{
 	public Enemy Enemy2{
 		get{ return enemy2; }
 		set{ enemy2 = value; }
+	}
+	public Character Defender{
+		get{ return defender; }
+		set{ defender = value; }
 	}
 	//allows for turn based attack system. Want this to go through a loop of battlers
 	public void SwitchAttacker(){

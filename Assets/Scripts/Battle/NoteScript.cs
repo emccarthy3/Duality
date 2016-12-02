@@ -11,7 +11,6 @@ public class NoteScript : MonoBehaviour {
 		// if the note hits the nozone, it is a missed note
 		if (col.gameObject.tag == "fail") {
 			Destroy (this.gameObject);
-			//Debug.Log ("destroyed");
 		}
 
 		// if the note hits the arrow and it's trigger is on, you get the point!
@@ -21,9 +20,6 @@ public class NoteScript : MonoBehaviour {
 		}
 	
 	}
-	public int Score {
-		get{ return score; }
-		set{ score = value; }
-	}
+
 
 }
