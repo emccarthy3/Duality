@@ -8,9 +8,11 @@ public class Character{
 	private int rp;
 	private int level;
 	private string name;
+	private int personalityType;
 	private ClassType type;
 	private Character nextPlayer;
 	private Dictionary<int, ClassType> classTypesToPersonality;
+	private Sprite playerSprite;
 
 	//the classtype of the battler (either warrior, mage, or ranger)
 	public ClassType Type {
@@ -38,5 +40,14 @@ public class Character{
 	public int RP {
 		get{ return rp; }
 		set{ rp = value; }
+	}
+
+	public int PersonalityType {
+		get{ return personalityType; }
+		set{ personalityType = value; }
+	}
+	public Sprite PlayerSprite {
+		get{ return playerSprite; }
+		set{ playerSprite = value; }
 	}
 }

@@ -33,6 +33,8 @@ public class Battle : State{
 	public override void Start(){
 		gc = GameObject.Find ("GameController");
 		gameController = gc.GetComponent <GameController> ();
+		GameObject background = GameObject.Find ("Background");
+		background.GetComponent<SpriteRenderer> ().sprite = gameController.Backgrounds[gameController.BattleLoop];
 		battlers = new List<Character> ();
 		yourTeam = new List<Character> ();
 		playerChar = gameController.YourPlayer;
@@ -89,6 +91,9 @@ public class Battle : State{
 		if (defender.HP <= 0) {
 			ui.RemoveFromHPList (battlers.IndexOf (defender));
 			battlers.Remove (defender);
+			if (defender.GetType ().Name == "Enemy") {
+				ui.RemoveDefeatedEnemyButton (defender.Name);
+			}
 		}
 		yield return new WaitForSeconds (1);
 			SwitchAttacker ();
@@ -100,9 +105,9 @@ public class Battle : State{
 		set{ selectedAction = value; }
 	}
 
-	//will calculate damage dealt
+	//will calculate damage dealt. More damage is dealt depending on the battle loop
 	public void DealDamage(Character defender){
-		defender.HP -= selectedAction.CalculateDamage(attacker , defender);
+		defender.HP -= selectedAction.CalculateDamage(attacker , defender) + gameController.BattleLoop;
 	}
 
 	//property for setting enemies for player attacks. Used in UIController to set enemy choice buttons
@@ -119,6 +124,10 @@ public class Battle : State{
 	public Character Defender{
 		get{ return defender; }
 		set{ defender = value; }
+	}
+	public List<Character> Battlers{
+		get{ return battlers; }
+		set{ battlers = value; }
 	}
 	//allows for turn based attack system. Want this to go through a loop of battlers
 	public void SwitchAttacker(){

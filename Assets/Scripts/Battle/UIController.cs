@@ -25,22 +25,39 @@ public class UIController : MonoBehaviour {
 	[SerializeField] private Button battleFinishedButton;
 	[SerializeField] private Button exitHelpButton;
 	[SerializeField] private Button helpButton;
+	[SerializeField] private Text playerType;
+	[SerializeField] private Text partnerType;
+	[SerializeField] private Text enemy1Type;
+	[SerializeField] private Text enemy2Type;
 	[SerializeField] private List<Button> moveButtons;
 	[SerializeField] private Text playerHP;
 	[SerializeField] private Text partnerHP;
 	[SerializeField] private Text enemy1HP;
 	[SerializeField] private Text enemy2HP;
 	[SerializeField] private List<Text> hpList;
-	private Character enemy;
 
+
+	private Character enemy;
+	private List<Text> typeLabels;
 	private Player player;
 
 
 	// Initializes UI for battle, starts with a UI for the character to choose their first move.
 	void Start () {
+		typeLabels = new List<Text> ();
+		typeLabels.Add (playerType);
+		typeLabels.Add (partnerType);
+		typeLabels.Add (enemy1Type);
+		typeLabels.Add (enemy2Type);
+		SetTypeLabels ();
+		Debug.Log (typeLabels [0].text + "TYPE LABELS");
 		enemy = new Character ();
 		gc = GameObject.Find ("GameController");
 		gameController= gc.GetComponent <GameController> ();
+		GameObject playerSprite = GameObject.Find ("PlayerSprite");
+		playerSprite.GetComponent<SpriteRenderer> ().sprite = gameController.YourPlayer.PlayerSprite;
+		GameObject partnerSprite = GameObject.Find ("PartnerSprite");
+		partnerSprite.GetComponent<SpriteRenderer> ().sprite = gameController.YourPartner.PlayerSprite;
 		enemyChooser.Close ();
 		teamAttackChooser.Close ();
 		battleFinishedPopup.Close ();
@@ -74,13 +91,24 @@ public class UIController : MonoBehaviour {
 		hpList [index].text = name + " HP: " + hp;
 
 	}
-
+	public void SetTypeLabels(){
+		for (int i = 0; i < battle.Battlers.Count; i++) {
+			typeLabels [i].text = battle.Battlers [i].Type.ClassName;
+		}
+	}
 	//once the enemy to attack is chosen through the enemy chooser display, the attack move will be carried out.
 	public void OnEnemySelect(Character enemy){
 		battle.Fight(enemy);
 		enemyChooser.Close ();
 	}
-
+	public void ToNextBattle(){
+		gameController.BattleLoop += 1;
+		if (gameController.BattleLoop == 2) {
+			gameController.SwitchScene ("StartScene");
+		} else {
+			gameController.SwitchScene ("Dialogue1");
+		}
+	}
 	//when a team attack is selected, a UI will appear to do the rhthym minigame
 	public void OnTeamAttackSelect(Character enemy){
 		battle.Defender = enemy;
@@ -96,6 +124,9 @@ public class UIController : MonoBehaviour {
 	}
 
 	public void OnBattleEndDialogue(){
+		gameController.YourPlayer.HP = 10;
+		gameController.YourPartner.HP = 10;
+	
 		battleFinishedPopup.Open ();
 	}
 	//this method makes the character move buttons temporarily disabled so the player cannot move while the enemy is moving.
@@ -146,6 +177,7 @@ public class UIController : MonoBehaviour {
 	public void RemoveFromHPList(int index){
 		hpList [index].text = "Defeated!";
 		hpList.RemoveAt (index);
+
 	}
 
 	public void ChangeCanvasState(bool state){
@@ -153,8 +185,15 @@ public class UIController : MonoBehaviour {
 		Canvas canvas = c.GetComponent <Canvas> ();
 		canvas.enabled = state;
 
-
 	}
-
+	public void RemoveDefeatedEnemyButton(string enemyName){
+		if (enemyName == "Enemy 1") {
+			enemy1Button.gameObject.SetActive (false);
+			teamEnemy1Button.gameObject.SetActive (false);
+		} else {
+			enemy2Button.gameObject.SetActive (false);
+			teamEnemy2Button.gameObject.SetActive (false);
+		}
+	}
 }
 

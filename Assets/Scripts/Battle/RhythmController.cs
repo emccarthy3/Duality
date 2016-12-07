@@ -48,19 +48,18 @@ public class RhythmController : MonoBehaviour {
 	}
 	// instantiates notes in the correct position on thet background
 	IEnumerator makeNotes() {
-		// wait one second before making a new one; this should change as the levels get harder/RP goes down
-		// somewhere the gravity should be changed as levels get harder
-		yield return new WaitForSeconds (.2f);
+		// wait half a second before making a new one; 
+		yield return new WaitForSeconds (.5f);
 		//xPos = notePositions [lrud [whichDir]];
 
 		xPos = notePositions[Random.Range(1,4)];
 		whichDir += 1;
 		if (whichDir >= lrud.Count) {
-			yield return new WaitForSeconds (2.5f);
+			yield return new WaitForSeconds (1.5f);
 			rb.gameObject.SetActive (false);
 			GameObject uic = GameObject.Find ("UIController");
 			UIController uiController = uic.GetComponent <UIController> ();
-			uiController.teamAttackisFinished (score);
+			uiController.teamAttackisFinished (score/2);
 			uiController.ChangeCanvasState (true);
 			whichDir = 0;
 			score = 0;

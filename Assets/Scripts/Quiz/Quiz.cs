@@ -60,25 +60,37 @@ public class Quiz : State {
 				gameController.YourPlayer = new Player(new Warrior());
 				gameController.YourPartner = new Ally (new Magician ());
 				question.text = "Congratulations! You are a warrior!";
+				gameController.YourPlayer.PersonalityType = 1;
+				gameController.YourPlayer.PlayerSprite = gameController.Sprites [0];
+				gameController.YourPartner.PlayerSprite = gameController.Sprites [2];
+				Debug.Log ("Your Personality is" + gameController.YourPlayer.PersonalityType);
 
 			} else if (average >= 1.5 && average < 2.5) {
 				question.text = "Congratulations! You are an ranger!";
 				gameController.YourPlayer= new Player(new Ranger());
 				gameController.YourPartner = new Ally (new Warrior ());
+				gameController.YourPlayer.PersonalityType = 2;
+				gameController.YourPartner.PlayerSprite = gameController.Sprites [0];
+				gameController.YourPlayer.PlayerSprite = gameController.Sprites [1];
+				Debug.Log ("Your Personality is" + gameController.YourPlayer.PersonalityType);
 			} else {
 				question.text = "Congratulations! You are a magician!";
 				gameController.YourPlayer = new Player(new Magician());
 				gameController.YourPartner = new Ally (new Ranger ());
+				gameController.YourPlayer.PersonalityType = 3;
+				gameController.YourPartner.PlayerSprite = gameController.Sprites [1];
+				gameController.YourPlayer.PlayerSprite = gameController.Sprites [2];
+				Debug.Log ("Your Personality is" + gameController.YourPlayer.PersonalityType);
 			}
 			endButton.gameObject.SetActive (true);
 		}
 	}
-    public void OnClick () {   
+	public void OnClick () {   
 		score += buttons [EventSystem.current.currentSelectedGameObject.name];
 		Debug.Log ("current score" + score);
 		i++;
 		question.text = questions [i];
-        }
+	}
 
 	public bool IsFinished{
 		get{ return isFinished; }

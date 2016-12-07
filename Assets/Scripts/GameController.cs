@@ -7,12 +7,14 @@ using System.Collections.Generic;
 public class GameController : MonoBehaviour {
 	private Player yourPlayer;
 	private Ally yourPartner;
-
+	private int battleLoop;
+	[SerializeField] private List<Sprite> sprites;
+	[SerializeField] private List<Sprite> backgrounds;
 	// Use this for initialization
 	void Start () {
 		//ensures the object's data is not erased between scenes
 		DontDestroyOnLoad (this);
-
+		battleLoop = 0;
 	}
 		
 	public Player YourPlayer{
@@ -28,4 +30,17 @@ public class GameController : MonoBehaviour {
 	{
 		SceneManager.LoadScene(nextScene);
 	}
+	public List<Sprite> Sprites{
+		get{ return sprites; }
+		set{sprites = value; }
+	}
+	public List<Sprite> Backgrounds{
+		get{ return backgrounds; }
+		set{backgrounds = value; }
+	}
+	public int BattleLoop{
+		get{ return battleLoop; }
+		set{battleLoop = value; }
+	}
+
 }

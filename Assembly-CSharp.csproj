@@ -68,6 +68,7 @@
      <Compile Include="Assets\Scripts\Battle\TeamAttackChooser.cs" />
      <Compile Include="Assets\Scripts\Battle\UIController.cs" />
      <Compile Include="Assets\Scripts\Battle\Warrior.cs" />
+     <Compile Include="Assets\Scripts\Dialogue\Dialogue.cs" />
      <Compile Include="Assets\Scripts\Dialogue\YesNoDialogue.cs" />
      <Compile Include="Assets\Scripts\GameController.cs" />
      <Compile Include="Assets\Scripts\Menu\StartMenu.cs" />

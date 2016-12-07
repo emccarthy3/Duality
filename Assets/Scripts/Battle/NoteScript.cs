@@ -12,7 +12,7 @@ public class NoteScript : MonoBehaviour {
 		gc = GameObject.Find ("GameController");
 		gameController= gc.GetComponent <GameController> ();
 		Debug.Log (gameController.YourPlayer.RP);
-		Physics2D.gravity = new Vector3(0,-(50-gameController.YourPlayer.RP) , 0);
+		Physics2D.gravity = new Vector3(0,-(100-gameController.YourPlayer.RP) , 0);
 	}
 	void OnTriggerEnter2D (Collider2D col) {
 		
