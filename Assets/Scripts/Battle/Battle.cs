@@ -41,6 +41,8 @@ public class Battle : State{
 		status.text = "RP: " + playerChar.RP;
 		enemy1= new Enemy(new Ranger());
 		enemy2 = new Enemy (new Warrior());
+		enemy1.Name = "Enemy 1";
+		enemy2.Name = "Enemy 2";
 		ui.SetButtonListeners (playerChar);
 		battlers.Add (playerChar);
 		battlers.Add (partnerChar);

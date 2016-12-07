@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class BattleFinishedPopup : MonoBehaviour {
-	[SerializeField] private GameObject button;
+
 	// Use this for initialization
 	void Start () {
 
