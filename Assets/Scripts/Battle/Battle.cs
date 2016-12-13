@@ -132,11 +132,16 @@ public class Battle : State{
 		if (attacker.HP <= (gameController.BattleLoop * 2 + DEFAULT_HP) / 2 && attacker.HealCount > 0) {
 			StartCoroutine (Heal ());
 		} else {
+			//if at least one player is attackable, the enemy will either block or attack (this is randomly chosen)
 			if (attackablePlayers.Count > 0) {
-				SelectedAction = enemy1.Type.Actions [0];
-				//need to check for empty list
-				Fight (attackablePlayers [Random.Range (0, attackablePlayers.Count)]);
+				if (Random.Range(0,2) == 0) {
+					SelectedAction = attacker.Type.Actions [Random.Range (0, 2)];
+					Fight (attackablePlayers [Random.Range (0, attackablePlayers.Count)]);
+				} else {
+					StartCoroutine (Block ());
+				}
 			} else { 
+				//if there's no attackable players, no available heals or HP is too high, the enemies will block
 				StartCoroutine (Block ());
 			}
 		}
@@ -145,8 +150,8 @@ public class Battle : State{
 	//calculates team attack damage and tells ui to update labels
 	public void DoTeamAttack(int damage){
 		defender.HP -= damage;
-		ui.UpdateDamageDealt (attacker.Name, defender.Name, damage);
-		ui.UpdateHPLabels (defender.Name, battlers.IndexOf(defender), defender.HP, defender.HasEffectDamage);
+		StartCoroutine(ui.UpdateDamageDealt (attacker.Name,SelectedAction, defender.Name, damage,battlers.IndexOf(defender)));
+		StartCoroutine(ui.UpdateHPLabels (defender.Name, battlers.IndexOf(defender), defender.HP, defender.HasEffectDamage,1));
 		StartCoroutine(CheckIfDefeated (defender,true));
 	}
 
@@ -159,37 +164,53 @@ public class Battle : State{
 		if (selectedAction.GetType().Name == "StatusEffectAttack" && damage > 0) {
 			defender.HasEffectDamage = true;
 		}
-		ui.UpdateDamageDealt (attacker.Name, defender.Name, damage);
-		ui.UpdateHPLabels (defender.Name, battlers.IndexOf(defender), defender.HP, defender.HasEffectDamage);
+		StartCoroutine(ui.UpdateDamageDealt (attacker.Name,SelectedAction, defender.Name, damage,battlers.IndexOf(defender)));
+		StartCoroutine(ui.UpdateHPLabels (defender.Name, battlers.IndexOf(defender), defender.HP, defender.HasEffectDamage,1));
 		StartCoroutine(CheckIfDefeated (defender,true));
 	}
 
 	public IEnumerator Block(){
+		ui.ChangeButtonVisibility (false);
 		attacker.IsBlocking = true;
 		attackablePlayers.Remove (attacker);
-		ui.UpdateBlockStatus (attacker.Name);
+		StartCoroutine(ui.UpdateBlockStatus (attacker.Name));
 		if (attacker.GetType ().Name == "Enemy") {
-			Debug.Log ("Enemy is blocking!");
 			ui.ChangeEnemyButtonVisibility (attacker.Name, false);
 			attackableEnemies.Remove (attacker);
-			Debug.Log("Attackable enemies count: " + attackableEnemies.Count);
 		}
 		yield return new WaitForSeconds (1);
 		SwitchAttacker ();
 	}
 
+	public IEnumerator EncouragePartner(){
+		ui.ChangeButtonVisibility (false);
+		if (playerChar.RP < 10) {
+			playerChar.RP += 1;
+		}
+		if (attacker.Name == "Player") {
+			partnerChar.EncourageCount += 1;
+			StartCoroutine(ui.Encourage (playerChar.Name, partnerChar.Name));
+		} else {
+			playerChar.EncourageCount += 1;
+			StartCoroutine(ui.Encourage (partnerChar.Name, playerChar.Name));
+		}
+		yield return new WaitForSeconds (2);
+		SwitchAttacker ();
+	}
 	//this method will check whether or not the defender was defeated in battle. If the defender was defeated, the UI will update accordingly and the battler will be taken out of the battler list
 	public IEnumerator CheckIfDefeated(Character target, bool needToSwitch){
+		yield return new WaitForSeconds (2);
 		if (target.HP <= 0) {
 			ui.RemoveFromHPList (battlers.IndexOf (target));
 			battlers.Remove (target);
-			if (defender.GetType ().Name == "Enemy") {
+			if (target.GetType ().Name == "Enemy") {
 				ui.ChangeEnemyButtonVisibility (target.Name, false);
+				attackableEnemies.Remove (target);
 			} else {
 				yourTeam.Remove (target);
+				attackablePlayers.Remove (target);
 			}
 		}
-		yield return new WaitForSeconds (1);
 		if (needToSwitch) {
 			SwitchAttacker ();
 		}
@@ -203,11 +224,7 @@ public class Battle : State{
 
 	//will calculate damage dealt. More damage is dealt depending on the battle loop
 	public double DealDamage(Character defender){
-		double damageDealt = selectedAction.CalculateDamage(attacker , defender);
-		//if the attack doesn't miss, do additional damage based on the battle loop
-		if (damageDealt > 0) {
-			damageDealt += gameController.BattleLoop;
-		}
+		double damageDealt = selectedAction.CalculateDamage(attacker , defender,gameController.BattleLoop);
 		defender.HP -= damageDealt;
 		return damageDealt;
 	}
@@ -244,14 +261,15 @@ public class Battle : State{
 				attacker.HP += gameController.BattleLoop + 2;
 			} else {
 				attacker.HP = DEFAULT_HP + gameController.BattleLoop * 2;
-				}
-			ui.UpdateHPLabels (attacker.Name, battlers.IndexOf (attacker), attacker.HP, defender.HasEffectDamage);
-			ui.UpdateHealStatus (attacker.Name, gameController.BattleLoop + 2, true);
+			}
+			ui.ChangeButtonVisibility (false);
+			StartCoroutine(ui.UpdateHealStatus (attacker.Name, gameController.BattleLoop + 2, true, attacker.HealCount));
+			StartCoroutine(ui.UpdateHPLabels (attacker.Name, battlers.IndexOf (attacker), attacker.HP, defender.HasEffectDamage,0));
 			attacker.HealCount--;
 			yield return new WaitForSeconds (1);
 			SwitchAttacker ();
 		} else {
-			ui.UpdateHealStatus (attacker.Name, 0, false);
+			StartCoroutine(ui.UpdateHealStatus (attacker.Name, 0, false, attacker.HealCount));
 		}
 	}
 	//allows for turn based attack system. 
@@ -262,7 +280,7 @@ public class Battle : State{
 			ui.ChangeButtonVisibility (true);
 		}
 		attacker = battlers [attackerIndex];
-
+		attacker.EncourageCount = 0;
 		if (attacker.IsBlocking) {
 			attacker.IsBlocking = false;
 			if (attacker.GetType ().Name == "Enemy") {
@@ -281,7 +299,7 @@ public class Battle : State{
 		//status effect damage will be dealt at the beginning of the affected player's turn
 		if (attacker.HasEffectDamage) {
 			attacker.HP -= 1;
-			ui.UpdateHPLabels (attacker.Name, battlers.IndexOf(attacker), attacker.HP, true);
+			ui.UpdateHPLabels (attacker.Name, battlers.IndexOf(attacker), attacker.HP, true,1);
 			StartCoroutine(CheckIfDefeated(attacker,false));
 		}
 		currentPlayer.text = attacker.Name + "'s turn";

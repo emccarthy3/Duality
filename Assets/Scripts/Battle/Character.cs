@@ -16,6 +16,7 @@ public class Character{
 	private Sprite playerSprite;
 	private bool hasEffectDamage = false;
 	private bool isBlocking = false;
+	private int encourageCount =0;
 	//the classtype of the battler (either warrior, mage, or ranger)
 	public ClassType Type {
 		get{ return type; }
@@ -65,5 +66,9 @@ public class Character{
 	public int HealCount{
 		get{ return healCount; }
 		set{ healCount = value; }
+	}
+	public int EncourageCount{
+		get{ return encourageCount; }
+		set{ encourageCount = value; }
 	}
 }

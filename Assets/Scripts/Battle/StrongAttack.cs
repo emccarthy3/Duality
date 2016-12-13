@@ -4,15 +4,8 @@ using UnityEngine;
 
 public class StrongAttack : Action {
 
-	private int baseDamage;
-	private string name;
-	private int effectDamage;
-
-	public StrongAttack(string name, int baseDamage) {
-		Name = name;
-		BaseDamage = baseDamage;
+	public StrongAttack(string name, int baseDamage,ParticleSystem particleSystem) : base(name,  baseDamage,  particleSystem){
 	}
-
 
 	public override void ActionBehavior ()
 	{

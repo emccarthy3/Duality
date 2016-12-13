@@ -11,6 +11,6 @@ public class Player : Character{
 		HP = 10;
 		RP = 5;
 		Type = type;
-		Name = "player";
+		Name = "Player";
 	}
 }

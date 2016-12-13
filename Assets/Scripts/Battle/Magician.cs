@@ -3,20 +3,23 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Magician : ClassType {
-	public Dictionary<string, double> classEffectiveness;
+	private GameObject gc;
+	private GameController gameController;
 
 	public Magician(){
 		ClassName = "Magician";
+		gc = GameObject.Find ("GameController");
+		gameController= gc.GetComponent <GameController> ();
 		Actions = DefaultActions();
 	}
 
 
 	public List<Action> DefaultActions(){
 		List<Action> defaultActions = new List<Action>();
-		defaultActions.Add (new SingleAttack ("Fire bolt", 1));
-		defaultActions.Add (new StrongAttack ("Earthquake",3));
-		defaultActions.Add (new StatusEffectAttack ("Water wave", 1));
-		defaultActions.Add (new VulnerabilityAttack ("Mind boggle",0));
+		defaultActions.Add (new SingleAttack("Fire bolt", 1,gameController.AttackSpecialEffects[0]));
+		defaultActions.Add (new StrongAttack ("Earthquake",3, gameController.AttackSpecialEffects[1]));
+		defaultActions.Add (new StatusEffectAttack ("Water wave", 1, gameController.AttackSpecialEffects[0]));
+		defaultActions.Add (new VulnerabilityAttack ("Mind boggle",0, gameController.AttackSpecialEffects[0]));
 		return defaultActions;
 	}
 

@@ -33,6 +33,7 @@ public class UIController : MonoBehaviour {
 	[SerializeField] private Button restartButton;
 	[SerializeField] private Button toMainMenuButton;
 	[SerializeField] private Button helpButton;
+	[SerializeField] private Button encourageButton;
 	[SerializeField] private Text playerType;
 	[SerializeField] private Text partnerType;
 	[SerializeField] private Text enemy1Type;
@@ -42,11 +43,11 @@ public class UIController : MonoBehaviour {
 	[SerializeField] private Text partnerHP;
 	[SerializeField] private Text enemy1HP;
 	[SerializeField] private Text enemy2HP;
+	[SerializeField] private Text rpText;
 	[SerializeField] private Text damageDealt;
 	[SerializeField] private List<Text> hpList;
+	[SerializeField] private List<ParticleSystem> particleSystems;
 	[SerializeField] private Text moveStatusText;
-	private int healCount = 3;
-	private Character enemy;
 	private List<Text> typeLabels;
 	private Player player;
 
@@ -59,9 +60,6 @@ public class UIController : MonoBehaviour {
 		typeLabels.Add (enemy1Type);
 		typeLabels.Add (enemy2Type);
 		SetTypeLabels ();
-		enemy = new Character ();
-		gc = GameObject.Find ("GameController");
-		gameController= gc.GetComponent <GameController> ();
 		GameObject playerSprite = GameObject.Find ("PlayerSprite");
 		playerSprite.GetComponent<SpriteRenderer> ().sprite = gameController.YourPlayer.PlayerSprite;
 		GameObject partnerSprite = GameObject.Find ("PartnerSprite");
@@ -77,20 +75,21 @@ public class UIController : MonoBehaviour {
 		enemy2Button.onClick.AddListener(() =>  OnEnemySelect(battle.Enemy2));
 		healButton.onClick.AddListener(() =>  battle.StartCoroutine(battle.Heal()));
 		blockButton.onClick.AddListener(() =>  battle.StartCoroutine(battle.Block()));
+		encourageButton.onClick.AddListener(() =>  battle.StartCoroutine(battle.EncouragePartner()));
 		teamEnemy1Button.onClick.AddListener(() =>  OnTeamAttackSelect(battle.Enemy1));
 		teamEnemy2Button.onClick.AddListener(() =>  OnTeamAttackSelect(battle.Enemy2));
 		teamAttackButton.onClick.AddListener(() =>  {if(battle.AttackableEnemies.Count > 0){
-				battle.SelectedAction = new TeamAttack();
-				OnAttackSelect (new TeamAttack());
+				battle.SelectedAction = new TeamAttack("Team attack", 1, gameController.AttackSpecialEffects[0]);
+				OnAttackSelect (new TeamAttack("Team attack", 1, gameController.AttackSpecialEffects[0]));
 		} else{
-			moveStatusText.text = "Both enemies are blocking!";
+			moveStatusText.text = "All enemies are blocking!";
 		}
 			});
 		singleAttackButton.onClick.AddListener (() => {if(battle.AttackableEnemies.Count > 0){
 			moveChooser.Close ();
 			attackChooser.Open ();
 		} else{
-			moveStatusText.text = "Both enemies are blocking!";
+			moveStatusText.text = "All enemies are blocking!";
 		}
 		});
 		helpButton.onClick.AddListener(() =>  { helpMenu.Open(); attackChooser.Close(); ChangeButtonVisibility(false);});
@@ -114,17 +113,36 @@ public class UIController : MonoBehaviour {
 			enemyChooser.Open ();
 		}
 	}
+	public  IEnumerator Encourage(string encouragerName, string encouragedName){
+		damageDealt.text = encouragerName + " encouraged " + encouragedName +  " ! " ;
+		yield return new WaitForSeconds (1);
+		rpText.text = "RP : " + gameController.YourPlayer.RP;
+		damageDealt.text = encouragedName + " will take 1 less damage if attacked this turn" ;
 
+	}
 	//this method updates the HP levels once a value has changed either from an attack or heal move.
-	public void UpdateHPLabels(string name,int index,double hp, bool hasStatusEffect){
-		hpList [index].text = name + " HP: " + hp;
+	public IEnumerator UpdateHPLabels(string name,int index,double hp, bool hasStatusEffect, int delay){
+		yield return new WaitForSeconds (delay);
+		if (hp <= 0) {
+			hpList [index].text = name + " HP: " + 0;
+		}else {
+			hpList [index].text = name + " HP: " + hp;
+		}
 		if (hasStatusEffect) {
 			hpList [index].color = Color.red;
 		}
 
 	}
-	public void UpdateDamageDealt(string attackerName, string defenderName, double damage){
-		damageDealt.text = attackerName + " dealt " + damage + " damage to " + defenderName;
+	public IEnumerator UpdateDamageDealt(string attackerName,Action action, string defenderName, double damage, int defenderIndex){
+		damageDealt.text = attackerName + " used " + action.Name + " on " + defenderName;
+		action.ParticleEffect.transform.position = new Vector3(0,0,0);
+		particleSystems[defenderIndex].Play ();
+		yield return new WaitForSeconds (1);
+		if (damage > 0) {
+			damageDealt.text = attackerName + " dealt " + damage + " damage to " + defenderName;
+		} else {
+			damageDealt.text = "Attack missed!";
+		}
 	}
 	public void SetTypeLabels(){
 		for (int i = 0; i < battle.Battlers.Count; i++) {
@@ -160,15 +178,20 @@ public class UIController : MonoBehaviour {
 		battle.DoTeamAttack (score);
 	}
 
-	public void UpdateHealStatus(string healerName, int HPRecovered, bool successfulHeal){
+	public IEnumerator UpdateHealStatus(string healerName, int HPRecovered, bool successfulHeal, int healCount){
 		if (successfulHeal) {
 			damageDealt.text = healerName + " recovered " + HPRecovered + " hp ";
+		} else if (healCount == 0) {
+			moveStatusText.text = "No more heals left! Pick a different move";
 		} else {
 			moveStatusText.text = "HP is already full! Pick a different move";
 		}
+		yield return new WaitForSeconds (0);
 	}
-	public void UpdateBlockStatus(string blockerName){
+	public IEnumerator UpdateBlockStatus(string blockerName){
+		
 		damageDealt.text = blockerName + " is blocking! ";
+		yield return new WaitForSeconds (1);
 
 	}
 	//opens popups for when the battle ends, either by the enemies being defeated or the player being defeated (determined by didDefeatEnemies)
@@ -194,29 +217,20 @@ public class UIController : MonoBehaviour {
 
 	//sets listeners for move buttons to perform move assigned to them according to the list of moves the character currently has. 
 	public void SetButtonListeners(Character battler){
+		gc = GameObject.Find ("GameController");
+		gameController= gc.GetComponent <GameController> ();
 		if (battler.GetType().Name != "Enemy") {
 			moveChooser.Open ();
 		}
 		moveStatusText.text = "Choose an action";
-		//loop gives index out of bound error?
-		//Debug.Log (moveButtons.Count + "Move buttons count");
-		//Debug.Log (battler.Actions.Count + "Battler count");
-		//Debug.Log(moveButtons.Count + "Move buttons count");
 		int i = 0;
 		foreach (Button button in moveButtons) { 
-			//Debug.Log ("i is " + i);
-			//for (int i = 0; i < moveButtons.Count; i++) {
-			/*button.onClick.AddListener (() => {
-				battle.SelectedAction = battler.Actions [i];
-				OnAttackSelect (battler.Actions [i]);
-			});
-			*/
 			moveButtons [i].GetComponentInChildren<Text> ().text = battler.Type.Actions[i].Name;
-			//moveButtons[i].onClick.AddListener(() => { battle.SelectedAction = battler.Actions[i];
-			//	OnAttackSelect(battler.Actions[i]);});
+			if (i > gameController.BattleLoop + 1) {
+				moveButtons [i].gameObject.SetActive (false);
+			}
 			i++;
 		}
-
 		moveButtons [0].onClick.AddListener (() => {
 			battle.SelectedAction = battler.Type.Actions [0];
 			OnAttackSelect (battler.Type.Actions [0]);
@@ -239,7 +253,6 @@ public class UIController : MonoBehaviour {
 	public void RemoveFromHPList(int index){
 		hpList [index].text = "Defeated!";
 		hpList.RemoveAt (index);
-
 	}
 
 

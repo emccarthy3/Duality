@@ -10,7 +10,7 @@ public class Ally : Character{
 		HP = 10;
 		RP = 5;
 		Type = type;
-		Name = "ally";
+		Name = "Partner";
 
 	}
 

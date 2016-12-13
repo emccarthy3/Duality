@@ -10,6 +10,7 @@ public class GameController : MonoBehaviour {
 	private int battleLoop;
 	[SerializeField] private List<Sprite> sprites;
 	[SerializeField] private List<Sprite> backgrounds;
+	[SerializeField] private List<ParticleSystem> attackSpecialEffects;
 	// Use this for initialization
 	void Start () {
 		//ensures the object's data is not erased between scenes
@@ -41,6 +42,11 @@ public class GameController : MonoBehaviour {
 	public int BattleLoop{
 		get{ return battleLoop; }
 		set{battleLoop = value; }
+	}
+
+	public List<ParticleSystem> AttackSpecialEffects{
+		get{ return attackSpecialEffects; }
+		set { attackSpecialEffects = value; } 
 	}
 
 }

@@ -2,18 +2,15 @@
 using System.Collections;
 using UnityEngine.SceneManagement;
 
-public class TeamAttack : Action{
+public class TeamAttack : Action {
 	private int baseDamage;
 	private string name;
 
-	public TeamAttack(){
+	public TeamAttack(string name, int baseDamage,ParticleSystem particleSystem) : base(name,  baseDamage,  particleSystem){
+	}
 		
+	public override void ActionBehavior (){
 	}
-
-	public override void ActionBehavior(){
-
-	}
-
 	// Use this for initialization
 	void Start () {
 	
