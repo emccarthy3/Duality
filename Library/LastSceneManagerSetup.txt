@@ -1,0 +1,13 @@
+sceneSetups:
+- path: Assets/Scenes/Quiz.unity
+  isLoaded: 0
+  isActive: 0
+- path: Assets/Scenes/Dialogue1.unity
+  isLoaded: 0
+  isActive: 0
+- path: Assets/Scenes/newBattle.unity
+  isLoaded: 0
+  isActive: 0
+- path: Assets/RPGScene.unity
+  isLoaded: 1
+  isActive: 1
