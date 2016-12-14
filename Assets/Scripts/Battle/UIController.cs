@@ -175,19 +175,24 @@ public class UIController : MonoBehaviour {
 
 	//rhthym controller calls this method once the team attack is finished and sends the final score to the UIController to send to the battle ( team attack damage will increase by 1 between battles).
 	public void teamAttackisFinished(int score){
-		battle.Defender.HP -= score + gameController.BattleLoop;
+		if (score > 0) {
+			battle.Defender.HP -= score + gameController.BattleLoop;
+			battle.Defender.IsAbleToHealState = new CanHealState (this, battle, battle.Defender);
+		}
+
 		battle.UpdateUIPostAttack (score + gameController.BattleLoop);
 	}
 
 	public IEnumerator UpdateHealStatus(string healerName, int HPRecovered, bool successfulHeal, int healCount){
 		if (successfulHeal) {
 			damageDealt.text = healerName + " recovered " + HPRecovered + " hp ";
+			yield return new WaitForSeconds (1);
+			battle.SwitchAttacker ();
 		} else if (healCount == 0) {
 			moveStatusText.text = "No more heals left! Pick a different move";
 		} else {
 			moveStatusText.text = "HP is already full! Pick a different move";
 		}
-		yield return new WaitForSeconds (0);
 	}
 	public IEnumerator UpdateBlockStatus(string blockerName){		
 		damageDealt.text = blockerName + " is blocking! ";

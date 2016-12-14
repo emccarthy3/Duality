@@ -15,9 +15,10 @@ public class Character{
 	private Dictionary<int, ClassType> classTypesToPersonality;
 	private Sprite playerSprite;
 	private bool hasEffectDamage = false;
-	private bool isBlocking = false;
 	private int encourageCount =0;
 	private State isBlockingState;
+	private HealState isAbleToHealState;
+
 	//the classtype of the battler (either warrior, mage, or ranger)
 	public ClassType Type {
 		get{ return type; }
@@ -34,8 +35,6 @@ public class Character{
 		set{ hp = value; }
 
 	}
-	//more stats here
-
 	public string Name {
 		get{ return name; }
 		set{ name = value; }
@@ -58,14 +57,15 @@ public class Character{
 		get{ return hasEffectDamage; }
 		set{ hasEffectDamage = value; }
 	}
-
-	public bool IsBlocking{
-		get{ return isBlocking; }
-		set{ isBlocking = value; }
-	}
+		
 	public State IsBlockingState{
 		get{ return isBlockingState; }
 		set{ isBlockingState = value; }
+	}
+
+	public HealState IsAbleToHealState{
+		get{ return isAbleToHealState; }
+		set{ isAbleToHealState = value; }
 	}
 	public int HealCount{
 		get{ return healCount; }
@@ -75,4 +75,5 @@ public class Character{
 		get{ return encourageCount; }
 		set{ encourageCount = value; }
 	}
+
 }

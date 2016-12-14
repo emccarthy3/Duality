@@ -28,6 +28,7 @@ public class Battle : MonoBehaviour{
 	private GameObject gc;
 	private GameController gameController;
 	private const int FINAL_PLAYER = 2;
+	private const int DEFAULT_HEAL_AMOUNT = 2;
 	private const int NUM_PERSONALITIES = 3;
 	private const int FINAL_ENEMY = 4;
 	private const int ENEMY_LOOP = 6;
@@ -36,6 +37,7 @@ public class Battle : MonoBehaviour{
 	[SerializeField] private AudioClip shootArrow;
 	private AudioSource source; 
 	private int healCount = 3;
+
 	//initializes battle. 
 
 	 void Start(){
@@ -73,6 +75,7 @@ public class Battle : MonoBehaviour{
 		battlers.Add (enemy2);
 		for (int i = 0; i < battlers.Count; i++) {
 			battlers [i].HealCount = healCount;
+			battlers [i].IsAbleToHealState = new NoHealState (ui,this, battlers[i]);
 		}
 		yourTeam.Add (playerChar);
 		yourTeam.Add (partnerChar);
@@ -216,6 +219,9 @@ public class Battle : MonoBehaviour{
 	public double DealDamage(Character defender){
 		double damageDealt = selectedAction.CalculateDamage(attacker , defender,gameController.BattleLoop);
 		defender.HP -= damageDealt;
+		if (damageDealt > 0) {
+			defender.IsAbleToHealState = new CanHealState (ui, this, defender);
+		}
 		return damageDealt;
 	}
 
@@ -250,21 +256,11 @@ public class Battle : MonoBehaviour{
 	}
 
 	public IEnumerator Heal (){
-		if (attacker.HP < DEFAULT_HP + gameController.BattleLoop * 2 && attacker.HealCount > 0) {
-			if (attacker.HP <= DEFAULT_HP + gameController.BattleLoop * 2 - 2) {
-				attacker.HP += gameController.BattleLoop + 2;
-			} else {
-				attacker.HP = DEFAULT_HP + gameController.BattleLoop * 2;
-			}
-			ui.ChangeButtonVisibility (false);
-			StartCoroutine(ui.UpdateHealStatus (attacker.Name, gameController.BattleLoop + 2, true, attacker.HealCount));
-			StartCoroutine(ui.UpdateHPLabels (attacker.Name, battlers.IndexOf (attacker), attacker.HP, defender.HasEffectDamage,0));
-			attacker.HealCount--;
-			yield return new WaitForSeconds (1);
-			SwitchAttacker ();
-		} else {
-			StartCoroutine(ui.UpdateHealStatus (attacker.Name, 0, false, attacker.HealCount));
+		if (attacker.HP == DEFAULT_HP + gameController.BattleLoop * 2 || attacker.HealCount == 0) {
+			attacker.IsAbleToHealState = new NoHealState (ui, this, attacker);
 		}
+		attacker.IsAbleToHealState.Heal (DEFAULT_HP + gameController.BattleLoop * 2, gameController.BattleLoop + 2);
+		yield return new WaitForSeconds (0);			
 	}
 	//allows for turn based attack system. 
 	public void SwitchAttacker(){
@@ -275,16 +271,20 @@ public class Battle : MonoBehaviour{
 		}
 		attacker = battlers [attackerIndex];
 		attacker.EncourageCount = 0;
+
 		attacker.IsBlockingState = new AttackableState (ui, this, attacker);
 		if (attacker.GetType ().Name == "Enemy") {			
 			ui.ChangeButtonVisibility (false);
+
 			EnemyAttacks ();
 		}
+
 		ui.SetButtonListeners (battlers [attackerIndex]);
 
 		//status effect damage will be dealt at the beginning of the affected player's turn
 		if (attacker.HasEffectDamage) {
 			attacker.HP -= 1;
+			attacker.IsAbleToHealState = new CanHealState (ui, this, attacker);
 			ui.UpdateHPLabels (attacker.Name, battlers.IndexOf(attacker), attacker.HP, true,1);
 			StartCoroutine(CheckIfDefeated(attacker,false));
 		}
