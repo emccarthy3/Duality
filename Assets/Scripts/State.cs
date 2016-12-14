@@ -3,7 +3,8 @@ using System.Collections;
 
 public abstract class State {
 
-	public State(Character battler){
+	public State(UIController ui,Battle battle, Character battler){
+		
 	}
 
 }

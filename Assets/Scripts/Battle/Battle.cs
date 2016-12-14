@@ -147,14 +147,6 @@ public class Battle : MonoBehaviour{
 		}
 	}
 
-	//calculates team attack damage and tells ui to update labels
-	public void DoTeamAttack(int damage){
-		defender.HP -= damage;
-		StartCoroutine(ui.UpdateDamageDealt (attacker.Name,SelectedAction, defender.Name, damage,battlers.IndexOf(defender)));
-		StartCoroutine(ui.UpdateHPLabels (defender.Name, battlers.IndexOf(defender), defender.HP, defender.HasEffectDamage,1));
-		StartCoroutine(CheckIfDefeated (defender,true));
-	}
-
 	// Performs fighting moves (will use animation) when chosen.  Puts a delay between action selected and the move performing for a more natural feel
 	public void Fight(Character defender){
 		source.PlayOneShot (shootArrow);
@@ -164,20 +156,18 @@ public class Battle : MonoBehaviour{
 		if (selectedAction.GetType().Name == "StatusEffectAttack" && damage > 0) {
 			defender.HasEffectDamage = true;
 		}
+		UpdateUIPostAttack (damage);
+	}
+
+	public void UpdateUIPostAttack(double damage){
 		StartCoroutine(ui.UpdateDamageDealt (attacker.Name,SelectedAction, defender.Name, damage,battlers.IndexOf(defender)));
 		StartCoroutine(ui.UpdateHPLabels (defender.Name, battlers.IndexOf(defender), defender.HP, defender.HasEffectDamage,1));
 		StartCoroutine(CheckIfDefeated (defender,true));
 	}
-
 	public IEnumerator Block(){
 		ui.ChangeButtonVisibility (false);
-		attacker.IsBlocking = true;
-		attackablePlayers.Remove (attacker);
+		attacker.IsBlockingState = new BlockingState (ui, this, attacker);
 		StartCoroutine(ui.UpdateBlockStatus (attacker.Name));
-		if (attacker.GetType ().Name == "Enemy") {
-			ui.ChangeEnemyButtonVisibility (attacker.Name, false);
-			attackableEnemies.Remove (attacker);
-		}
 		yield return new WaitForSeconds (1);
 		SwitchAttacker ();
 	}
@@ -254,6 +244,10 @@ public class Battle : MonoBehaviour{
 		get{ return attackableEnemies; }
 		set{ attackableEnemies = value; }
 	}
+	public List<Character> AttackablePlayers{
+		get{ return attackablePlayers; }
+		set{ attackablePlayers = value; }
+	}
 
 	public IEnumerator Heal (){
 		if (attacker.HP < DEFAULT_HP + gameController.BattleLoop * 2 && attacker.HealCount > 0) {
@@ -281,15 +275,7 @@ public class Battle : MonoBehaviour{
 		}
 		attacker = battlers [attackerIndex];
 		attacker.EncourageCount = 0;
-		if (attacker.IsBlocking) {
-			attacker.IsBlocking = false;
-			if (attacker.GetType ().Name == "Enemy") {
-				ui.ChangeEnemyButtonVisibility (attacker.Name, true);
-				attackableEnemies.Add (attacker);
-			} else {
-				attackablePlayers.Add (attacker);
-			}
-		}
+		attacker.IsBlockingState = new AttackableState (ui, this, attacker);
 		if (attacker.GetType ().Name == "Enemy") {			
 			ui.ChangeButtonVisibility (false);
 			EnemyAttacks ();

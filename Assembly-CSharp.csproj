@@ -48,8 +48,10 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\Battle\Action.cs" />
      <Compile Include="Assets\Scripts\Battle\Ally.cs" />
+     <Compile Include="Assets\Scripts\Battle\AttackableState.cs" />
      <Compile Include="Assets\Scripts\Battle\Battle.cs" />
      <Compile Include="Assets\Scripts\Battle\BattleFinishedPopup.cs" />
+     <Compile Include="Assets\Scripts\Battle\BlockingState.cs" />
      <Compile Include="Assets\Scripts\Battle\Character.cs" />
      <Compile Include="Assets\Scripts\Battle\ClassType.cs" />
      <Compile Include="Assets\Scripts\Battle\Enemy.cs" />

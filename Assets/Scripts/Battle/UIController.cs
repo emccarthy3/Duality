@@ -50,7 +50,7 @@ public class UIController : MonoBehaviour {
 	[SerializeField] private Text moveStatusText;
 	private List<Text> typeLabels;
 	private Player player;
-
+	private const int MAX_NUM_BATTLES = 3;
 
 	// Initializes UI for battle, starts with a UI for the character to choose their first move.
 	void Start () {
@@ -135,7 +135,6 @@ public class UIController : MonoBehaviour {
 	}
 	public IEnumerator UpdateDamageDealt(string attackerName,Action action, string defenderName, double damage, int defenderIndex){
 		damageDealt.text = attackerName + " used " + action.Name + " on " + defenderName;
-		action.ParticleEffect.transform.position = new Vector3(0,0,0);
 		particleSystems[defenderIndex].Play ();
 		yield return new WaitForSeconds (1);
 		if (damage > 0) {
@@ -156,7 +155,8 @@ public class UIController : MonoBehaviour {
 	}
 	public void ToNextScene(){
 		gameController.BattleLoop += 1;
-		if (gameController.BattleLoop == 3) {
+		if (gameController.BattleLoop == MAX_NUM_BATTLES) {
+			//make the final scene pop up
 			gameController.BattleLoop = 0;
 			gameController.SwitchScene ("StartScene");
 		} else {
@@ -173,9 +173,10 @@ public class UIController : MonoBehaviour {
 		rhythmController.Work();
 	}
 
-	//rhthym controller calls this method once the team attack is finished and sends the final score to the UIController to send to the battle.
+	//rhthym controller calls this method once the team attack is finished and sends the final score to the UIController to send to the battle ( team attack damage will increase by 1 between battles).
 	public void teamAttackisFinished(int score){
-		battle.DoTeamAttack (score);
+		battle.Defender.HP -= score + gameController.BattleLoop;
+		battle.UpdateUIPostAttack (score + gameController.BattleLoop);
 	}
 
 	public IEnumerator UpdateHealStatus(string healerName, int HPRecovered, bool successfulHeal, int healCount){
@@ -188,8 +189,7 @@ public class UIController : MonoBehaviour {
 		}
 		yield return new WaitForSeconds (0);
 	}
-	public IEnumerator UpdateBlockStatus(string blockerName){
-		
+	public IEnumerator UpdateBlockStatus(string blockerName){		
 		damageDealt.text = blockerName + " is blocking! ";
 		yield return new WaitForSeconds (1);
 
@@ -210,7 +210,6 @@ public class UIController : MonoBehaviour {
 			attackChooser.Close ();
 			moveChooser.Close ();
 		} else {
-			attackChooser.Open ();
 			moveChooser.Open ();
 		}
 	}
@@ -253,6 +252,7 @@ public class UIController : MonoBehaviour {
 	public void RemoveFromHPList(int index){
 		hpList [index].text = "Defeated!";
 		hpList.RemoveAt (index);
+		particleSystems.RemoveAt (index);
 	}
 
 
@@ -260,7 +260,6 @@ public class UIController : MonoBehaviour {
 		GameObject c = GameObject.Find ("Canvas");
 		Canvas canvas = c.GetComponent <Canvas> ();
 		canvas.enabled = state;
-
 	}
 
 	//if an enemy is defeated, prevent the user from selecting them when attacking

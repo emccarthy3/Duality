@@ -17,6 +17,7 @@ public class Character{
 	private bool hasEffectDamage = false;
 	private bool isBlocking = false;
 	private int encourageCount =0;
+	private State isBlockingState;
 	//the classtype of the battler (either warrior, mage, or ranger)
 	public ClassType Type {
 		get{ return type; }
@@ -62,7 +63,10 @@ public class Character{
 		get{ return isBlocking; }
 		set{ isBlocking = value; }
 	}
-
+	public State IsBlockingState{
+		get{ return isBlockingState; }
+		set{ isBlockingState = value; }
+	}
 	public int HealCount{
 		get{ return healCount; }
 		set{ healCount = value; }
