@@ -3,18 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/*
+ * Story Scene loads the quiz scene when the user is done reading the story
+ * Written by: Evan Elkin
+ */
 public class StoryScene : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
+	//switches to quiz scene
 	public void SwitchScenes(){
 		SceneManager.LoadScene ("Quiz");
 	}

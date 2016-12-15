@@ -3,6 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
+/*
+ * Concrete RhythmGame
+ * Written by: Aneesha Smith (logic) & Betsey McCarthy (refactoring)
+ */
 public class RhythmController : AbstractRhythmGame { 
 	private const int LEFT = 1;
 	private const int RIGHT = 2;
@@ -27,6 +31,7 @@ public class RhythmController : AbstractRhythmGame {
 	// location of the note on the background 
 	private float xPos;
 
+	//initializes note positions
 	public override void Start () {
 		rhythmBackground = GameObject.Find ("rhythmBackground");
 		rhythmBackground.gameObject.SetActive (false);
@@ -37,14 +42,15 @@ public class RhythmController : AbstractRhythmGame {
 		notePositions.Add (DOWN, DOWN_POS);
 	}
 
-	// starts coroutine
+	// starts coroutine for making new notes
 	public override void Update () {
 		if (hasBegun == "n") {
 			StartCoroutine (MakeNotes ());
 			hasBegun = "y";
 		}
 	}
-	// instantiates notes in the correct position on thet background
+
+	// instantiates notes in the correct position on the background
 	public override IEnumerator MakeNotes() {
 		// wait half a second before making a new one; 
 		yield return new WaitForSeconds (NOTE_CREATE_DELAY);
@@ -55,7 +61,6 @@ public class RhythmController : AbstractRhythmGame {
 			rhythmBackground.gameObject.SetActive (false);
 			GameObject uic = GameObject.Find ("UIController");
 			UIController uiController = uic.GetComponent <UIController> ();
-			Debug.Log("SCORE IN RHTHMY" + Score);
 			uiController.teamAttackisFinished (Score/2);
 			uiController.ChangeCanvasState (true);
 			whichDir = 0;
@@ -67,6 +72,7 @@ public class RhythmController : AbstractRhythmGame {
 		}
 	}
 
+	//this is called once the team attack button enemy choice is selected.  Starts up rhythm game
 	public override void StartRhythmGame() {
 		hasBegun = "n";
 		rhythmBackground.gameObject.SetActive (true);

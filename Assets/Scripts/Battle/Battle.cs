@@ -3,7 +3,10 @@ using System.Collections;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
-//Class for  controlling the battle.  Written by: Betsey
+/*
+ * Defines the concrete implementation of the Battle class.  
+ * Written by: Betsey McCarthy
+ */
 using UnityEngine.SceneManagement;
 
 
@@ -21,7 +24,6 @@ public class Battle : AbstractBattle{
 	//private List<Character> attackablePlayers;
 	//private List<Character> attackableEnemies;
 	private List<int> enemyRandomAttacks;
-	private Character attacker;
 	private int attackerIndex = 0;
 	private GameObject gc;
 	private GameController gameController;
@@ -36,8 +38,9 @@ public class Battle : AbstractBattle{
 	[SerializeField] private AudioClip shootArrow;
 	private AudioSource source; 
 	private int healCount = 3;
+	private List<string> statusEffectAttacks;
 
-	//initializes battle. 
+	//initializes battle. Sets sprites for enemies, sets UI texts appropriately, and sets starting states for battlers (and adds them to appropriate lists) 
 	  public override void Start(){
 		source = GetComponent<AudioSource> ();
 		gc = GameObject.Find ("GameController");
@@ -52,9 +55,12 @@ public class Battle : AbstractBattle{
 		yourTeam = new List<Character> ();
 		AttackablePlayers = new List<Character> ();
 		AttackableEnemies = new List<Character> ();
+		statusEffectAttacks = new List<string> ();
 		playerChar = gameController.YourPlayer;
 		partnerChar = gameController.YourPartner;
+		//RP will change depending on dialogue beforehand
 		status.text = "RP: " + playerChar.RP;
+		//enemies are set depending on the class type of the player
 		enemy1= enemies[gameController.YourPlayer.PersonalityType % NUM_PERSONALITIES * 2 + (ENEMY_LOOP * gameController.BattleLoop)];
 		enemy2 = enemies[gameController.YourPlayer.PersonalityType % NUM_PERSONALITIES  * 2 + (ENEMY_LOOP * gameController.BattleLoop)  + 1];
 		GameObject enemy1Sprite = GameObject.Find ("Enemy1Sprite");
@@ -63,24 +69,25 @@ public class Battle : AbstractBattle{
 		enemy2Sprite.GetComponent<SpriteRenderer> ().sprite = enemy2.PlayerSprite;
 		enemy1.Name = "Enemy 1";
 		enemy2.Name = "Enemy 2";
+		// Max HP increases by two in between battles to increase difficulty
 		enemy1.HP = gameController.BattleLoop * 2 + DEFAULT_HP;
 		enemy2.HP = gameController.BattleLoop * 2 + DEFAULT_HP;
 		ui.SetButtonListeners (playerChar);
+		//list of battlers is used to switch turns
 		Battlers.Add (playerChar);
 		Battlers.Add (partnerChar);
 		Battlers.Add (enemy1);
 		Battlers.Add (enemy2);
+		//all battlers start in the no heal state and alive state
 		for (int i = 0; i < Battlers.Count; i++) {
 			Battlers [i].HealCount = healCount;
 			Battlers [i].IsAbleToHealState = new NoHealState (ui,this, Battlers[i]);
+			Battlers [i].LifeState = new AliveState (ui, this, Battlers [i]); 
 		}
-		yourTeam.Add (playerChar);
-		yourTeam.Add (partnerChar);
-		AttackablePlayers.Add (playerChar);
-		AttackablePlayers.Add (partnerChar);
-		AttackableEnemies.Add (enemy1);
-		AttackableEnemies.Add (enemy2);
-		attacker = playerChar;
+		statusEffectAttacks.Add ("StatusEffectAttack");
+		statusEffectAttacks.Add ("ArrowFlurry");
+		statusEffectAttacks.Add ("MindBoggle");
+		Attacker = playerChar;
 	}
 
 	//checks to see if both enemies were defeated and will load the next scene if true
@@ -127,14 +134,15 @@ public class Battle : AbstractBattle{
 		enemies.Add(17,new Enemy(new Warrior(),gameController.Sprites[9])); 
 	}
 
-	// Performs fighting moves (will use animation) when chosen.  Puts a delay between action selected and the move performing for a more natural feel
+	// Performs fighting moves when chosen.  Puts a delay between action selected and the move performing for a more natural feel
 	public override void Fight(Character defender){
 		source.PlayOneShot (shootArrow);
 		Defender = defender;
 		double damage = DealDamage (Defender);
 		//if the status effect attack hit, do status effect damage on the defender
-		if (SelectedAction.GetType().Name == "StatusEffectAttack" && damage > 0) {
+		if (statusEffectAttacks.Contains(SelectedAction.GetType().Name) && damage > 0) {
 			Defender.HasEffectDamage = true;
+			Defender.EffectDamage = SelectedAction.EffectDamage;
 		}
 		UpdateUIPostAttack (damage);
 	}
@@ -142,13 +150,13 @@ public class Battle : AbstractBattle{
 	// Method to trigger enemy attacks after both player characters attack. Implements AI
 	public override void EnemyAttacks(){
 		//if the enemy's HP is less than half and the enemy has heals available, heal
-		if (attacker.HP <= (gameController.BattleLoop * 2 + DEFAULT_HP) / 2 && attacker.HealCount > 0) {
+		if (Attacker.HP <= (gameController.BattleLoop * 2 + DEFAULT_HP) / 2 && Attacker.HealCount > 0) {
 			StartCoroutine (Heal ());
 		} else {
 			//if at least one player is attackable, the enemy will either block or attack (this is randomly chosen, 70% chance of attack, 30% chance of block)
 			if (AttackablePlayers.Count > 0) {
 				if (Random.Range(0f,1f) < .7) {
-					SelectedAction = attacker.Type.Actions [Random.Range (0, gameController.BattleLoop + 2)];
+					SelectedAction = Attacker.Type.Actions [Random.Range (0, gameController.BattleLoop + 2)];
 					Fight (AttackablePlayers [Random.Range (0, AttackablePlayers.Count)]);
 				} else {
 					StartCoroutine (Block ());
@@ -160,20 +168,23 @@ public class Battle : AbstractBattle{
 		}
 	}
 
+	//After an attack, coroutines will start to allow the player to see what move was used and how much damage it did (and check if the defender was defeated)
 	public override void UpdateUIPostAttack(double damage){
-		StartCoroutine(ui.UpdateDamageDealt (attacker.Name,SelectedAction, Defender.Name, damage,Battlers.IndexOf(Defender)));
+		StartCoroutine(ui.UpdateDamageDealt (Attacker.Name,SelectedAction, Defender.Name, damage,Battlers.IndexOf(Defender)));
 		StartCoroutine(ui.UpdateHPLabels (Defender.Name, Battlers.IndexOf(Defender), Defender.HP, Defender.HasEffectDamage,1));
 		StartCoroutine(CheckIfDefeated (Defender,true));
 	}
 
+	//When an attacker blocks, they will change state to blocking state and the ui will let the player know a block occurred
 	public IEnumerator Block(){
 		ui.ChangeButtonVisibility (false);
-		attacker.IsBlockingState = new BlockingState (ui, this, attacker);
-		StartCoroutine(ui.UpdateBlockStatus (attacker.Name));
+		Attacker.IsBlockingState = new BlockingState (ui, this, Attacker);
+		StartCoroutine(ui.UpdateBlockStatus (Attacker.Name));
 		yield return new WaitForSeconds (1);
 		SwitchAttacker ();
 	}
 
+	//Encouraging your partner will increase RP by 1, making team attacks easier to perform
 	public IEnumerator EncouragePartner(){
 		ui.ChangeButtonVisibility (false);
 		if (playerChar.RP < DEFAULT_HP) {
@@ -188,15 +199,7 @@ public class Battle : AbstractBattle{
 	public IEnumerator CheckIfDefeated(Character target, bool needToSwitch){
 		yield return new WaitForSeconds (2);
 		if (target.HP <= 0) {
-			ui.RemoveFromHPList (Battlers.IndexOf (target));
-			Battlers.Remove (target);
-			if (target.GetType ().Name == "Enemy") {
-				ui.ChangeEnemyButtonVisibility (target.Name, false);
-				AttackableEnemies.Remove (target);
-			} else {
-				yourTeam.Remove (target);
-				AttackablePlayers.Remove (target);
-			}
+			target.LifeState = new DefeatedState (ui, this, target);
 		}
 		if (needToSwitch) {
 			SwitchAttacker ();
@@ -204,7 +207,7 @@ public class Battle : AbstractBattle{
 	}
 	//will calculate damage dealt. More damage is dealt depending on the battle loop
 	public override double DealDamage(Character defender){
-		double damageDealt = SelectedAction.CalculateDamage(attacker , Defender, gameController.BattleLoop);
+		double damageDealt = SelectedAction.CalculateDamage(Attacker , Defender, gameController.BattleLoop);
 		Defender.HP -= damageDealt;
 		if (damageDealt > 0) {
 			Defender.IsAbleToHealState = new CanHealState (ui, this, Defender);
@@ -223,38 +226,42 @@ public class Battle : AbstractBattle{
 		get{ return enemy2; }
 		set{ enemy2 = value; }
 	}
+	//defines list of the characters on your team (player and partner)
+	public List<Character> YourTeam{
+		get{ return yourTeam; }
+		set{ yourTeam= value; }
+	}
 
-	//
+	//the player will recover HP depending on the battle, and will switch to no heal state if the player cannot heal (full HP or out of heals)
 	public IEnumerator Heal (){
-		if (attacker.HP == DEFAULT_HP + gameController.BattleLoop * 2 || attacker.HealCount == 0) {
-			attacker.IsAbleToHealState = new NoHealState (ui, this, attacker);
+		if (Attacker.HP == DEFAULT_HP + gameController.BattleLoop * 2 || Attacker.HealCount == 0) {
+			Attacker.IsAbleToHealState = new NoHealState (ui, this, Attacker);
 		}
-		attacker.IsAbleToHealState.Heal (DEFAULT_HP + gameController.BattleLoop * 2, gameController.BattleLoop + 2);
+		Attacker.IsAbleToHealState.Heal (DEFAULT_HP + gameController.BattleLoop * 2, gameController.BattleLoop + 2);
 		yield return new WaitForSeconds (0);			
 	}
 
-	//allows for turn based attack system. 
+	//allows for turn based attack system. Will deal any effect damage
 	public override void SwitchAttacker(){
 		attackerIndex++;
 		if (attackerIndex > Battlers.Count-1) {
 			attackerIndex = 0;
 			ui.ChangeButtonVisibility (true);
 		}
-		attacker = Battlers [attackerIndex];
-		attacker.IsBlockingState = new AttackableState (ui, this, attacker);
-		if (attacker.GetType ().Name == "Enemy") {			
+		Attacker = Battlers [attackerIndex];
+		Attacker.IsBlockingState = new AttackableState (ui, this, Attacker);
+		if (Attacker.HasEffectDamage) {
+			Attacker.HP -= Attacker.EffectDamage;
+			Attacker.IsAbleToHealState = new CanHealState (ui, this, Attacker);
+			ui.UpdateHPLabels (Attacker.Name, Battlers.IndexOf(Attacker), Attacker.HP, true,1);
+			StartCoroutine(CheckIfDefeated(Attacker,false));
+		}
+		if (Attacker.GetType ().Name == "Enemy") {			
 			ui.ChangeButtonVisibility (false);
 			EnemyAttacks ();
 		}
 		ui.SetButtonListeners (Battlers [attackerIndex]);
-		//status effect damage will be dealt at the beginning of the affected player's turn
-		if (attacker.HasEffectDamage) {
-			attacker.HP -= 1;
-			attacker.IsAbleToHealState = new CanHealState (ui, this, attacker);
-			ui.UpdateHPLabels (attacker.Name, Battlers.IndexOf(attacker), attacker.HP, true,1);
-			StartCoroutine(CheckIfDefeated(attacker,false));
-		}
-		currentPlayer.text = attacker.Name + "'s turn";
+		currentPlayer.text = Attacker.Name + "'s turn";
 	}
 
 }

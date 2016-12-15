@@ -3,18 +3,16 @@ using System.Collections;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+//Displays content for the starting scene. Written by: Aneesha Smith and Evan Elkin
 public class StartMenu : MonoBehaviour {
 	[SerializeField] private Button startButton;
-	// Use this for initialization
+
+	//Initializes start button listener to start the game
 	void Start () {
 		startButton.onClick.AddListener(() =>  SwitchScenes());
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
-		
+
+	//Loads the story scene when start button is clicked
 	public void SwitchScenes(){
 		SceneManager.LoadScene ("Story");
 	}

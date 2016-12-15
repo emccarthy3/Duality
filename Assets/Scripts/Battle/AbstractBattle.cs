@@ -2,8 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/* Engine code for creating a battle
+ * Written by: Betsey McCarthy
+ */
 public abstract class AbstractBattle: MonoBehaviour  {
 	private Character defender;
+	private Character attacker;
 	private List<Character> battlers;
 	private List<Character> attackableEnemies;
 	private List<Character> attackablePlayers;
@@ -31,20 +35,27 @@ public abstract class AbstractBattle: MonoBehaviour  {
 	public virtual void UpdateUIPostAttack(double damage){
 	}
 
+	//Defender is the character being attacked
 	public Character Defender{
 		get{ return defender; }
 		set{ defender = value; }
 	}
-
+	//Attacker is the current character selected in the battle (based on turn)
+	public Character Attacker{
+		get{ return attacker; }
+		set{ attacker = value; }
+	}
+	//defines a list of battlers in the battle
 	public List<Character> Battlers{
 		get{ return battlers; }
 		set{ battlers = value; }
 	}
-
+	//defines a list of enemies which are attackable (not defeated/blocking)
 	public List<Character> AttackableEnemies{
 		get{ return attackableEnemies; }
 		set{ attackableEnemies = value; }
 	}
+	//defines a list of players which are attackable (not defeated/blocking)
 	public List<Character> AttackablePlayers{
 		get{ return attackablePlayers; }
 		set{ attackablePlayers = value; }

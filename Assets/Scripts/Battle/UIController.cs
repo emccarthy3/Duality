@@ -3,8 +3,9 @@ using System.Collections;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
-/* UIController class 
- * Controls the display for the battle 
+
+/* 
+ * UIController class Controls the display for the battle. Communicates with both Battle and Rhythm Controller to respond to changes
  * Written by: Betsey McCarthy
  *
  */
@@ -51,6 +52,7 @@ public class UIController : MonoBehaviour {
 	private List<Text> typeLabels;
 	private Player player;
 	private const int MAX_NUM_BATTLES = 3;
+	private const int DEFAULT_HP = 10;
 
 	// Initializes UI for battle, starts with a UI for the character to choose their first move.
 	void Start () {
@@ -64,6 +66,7 @@ public class UIController : MonoBehaviour {
 		playerSprite.GetComponent<SpriteRenderer> ().sprite = gameController.YourPlayer.PlayerSprite;
 		GameObject partnerSprite = GameObject.Find ("PartnerSprite");
 		partnerSprite.GetComponent<SpriteRenderer> ().sprite = gameController.YourPartner.PlayerSprite;
+		//initially, close unnecessary menus and open menus for first attack
 		enemyChooser.Close ();
 		teamAttackChooser.Close ();
 		attackChooser.Close ();
@@ -71,6 +74,7 @@ public class UIController : MonoBehaviour {
 		restartPopup.Close ();
 		helpMenu.Close ();
 		moveChooser.Open ();
+		//set button listeners for menus
 		enemy1Button.onClick.AddListener(() =>  OnEnemySelect(battle.Enemy1));
 		enemy2Button.onClick.AddListener(() =>  OnEnemySelect(battle.Enemy2));
 		healButton.onClick.AddListener(() =>  battle.StartCoroutine(battle.Heal()));
@@ -83,6 +87,7 @@ public class UIController : MonoBehaviour {
 				OnAttackSelect (new TeamAttack("Team attack", 1, gameController.AttackSpecialEffects[0]));
 		} else{
 			moveStatusText.text = "All enemies are blocking!";
+			attackChooser.Close();
 		}
 			});
 		singleAttackButton.onClick.AddListener (() => {if(battle.AttackableEnemies.Count > 0){
@@ -90,6 +95,7 @@ public class UIController : MonoBehaviour {
 			attackChooser.Open ();
 		} else{
 			moveStatusText.text = "All enemies are blocking!";
+			attackChooser.Close();
 		}
 		});
 		helpButton.onClick.AddListener(() =>  { helpMenu.Open(); attackChooser.Close(); ChangeButtonVisibility(false);});
@@ -97,6 +103,7 @@ public class UIController : MonoBehaviour {
 		restartButton.onClick.AddListener(() => { SceneManager.LoadScene("newBattle");});
 		toMainMenuButton.onClick.AddListener(() => { SceneManager.LoadScene("StartScene");});
 		battleFinishedButton.onClick.AddListener(() =>  ToNextScene());
+		//set initial HP texts
 		playerHP.text = "Player HP: " + gameController.YourPlayer.HP;
 		partnerHP.text = "Partner HP: " + gameController.YourPartner.HP;
 		enemy1HP.text = "Enemy 1 HP: " + battle.Enemy1.HP;
@@ -113,6 +120,8 @@ public class UIController : MonoBehaviour {
 			enemyChooser.Open ();
 		}
 	}
+
+	//Updates the ui accordingly when the players use encourage
 	public  IEnumerator Encourage(){
 		damageDealt.text = battle.Battlers[0].Name + " and " + battle.Battlers[1].Name +  " are encoraging each other " ;
 		yield return new WaitForSeconds (1);
@@ -133,6 +142,7 @@ public class UIController : MonoBehaviour {
 		}
 
 	}
+	//Shows what move was used and how much damage was dealt to the player to create an easier to understand ui
 	public IEnumerator UpdateDamageDealt(string attackerName,Action action, string defenderName, double damage, int defenderIndex){
 		damageDealt.text = attackerName + " used " + action.Name + " on " + defenderName;
 		particleSystems[defenderIndex].Play ();
@@ -143,6 +153,8 @@ public class UIController : MonoBehaviour {
 			damageDealt.text = "Attack missed!";
 		}
 	}
+
+	//Loop for intializing battler type labels (warrior, ranger, magician)
 	public void SetTypeLabels(){
 		for (int i = 0; i < battle.Battlers.Count; i++) {
 			typeLabels [i].text = battle.Battlers [i].Type.ClassName;
@@ -158,7 +170,7 @@ public class UIController : MonoBehaviour {
 		if (gameController.BattleLoop == MAX_NUM_BATTLES) {
 			//make the final scene pop up
 			gameController.BattleLoop = 0;
-			gameController.SwitchScene ("StartScene");
+			gameController.SwitchScene ("End Scene");
 		} else {
 			gameController.SwitchScene ("Dialogue1");
 		}
@@ -179,10 +191,10 @@ public class UIController : MonoBehaviour {
 			battle.Defender.HP -= score + gameController.BattleLoop;
 			battle.Defender.IsAbleToHealState = new CanHealState (this, battle, battle.Defender);
 		}
-		Debug.Log ("SCORERE" + score);
 		battle.UpdateUIPostAttack (score + gameController.BattleLoop);
 	}
 
+	//Heal status is updated when a heal occurs (in heal state)
 	public IEnumerator UpdateHealStatus(string healerName, int HPRecovered, bool successfulHeal, int healCount){
 		if (successfulHeal) {
 			damageDealt.text = healerName + " recovered " + HPRecovered + " hp ";
@@ -201,8 +213,8 @@ public class UIController : MonoBehaviour {
 	}
 	//opens popups for when the battle ends, either by the enemies being defeated or the player being defeated (determined by didDefeatEnemies)
 	public void OnBattleEndDialogue(bool didDefeatEnemies){
-		gameController.YourPlayer.HP = 10 + gameController.BattleLoop * 2;
-		gameController.YourPartner.HP = 10 + gameController.BattleLoop * 2;;
+		gameController.YourPlayer.HP = DEFAULT_HP + gameController.BattleLoop * 2;
+		gameController.YourPartner.HP = DEFAULT_HP + gameController.BattleLoop * 2;;
 		if (didDefeatEnemies) {
 			battleFinishedPopup.Open ();
 		} else {
@@ -235,6 +247,7 @@ public class UIController : MonoBehaviour {
 			}
 			i++;
 		}
+		//this code throws an out of bounds exception if in a loop
 		moveButtons [0].onClick.AddListener (() => {
 			battle.SelectedAction = battler.Type.Actions [0];
 			OnAttackSelect (battler.Type.Actions [0]);
@@ -260,6 +273,7 @@ public class UIController : MonoBehaviour {
 		particleSystems.RemoveAt (index);
 	}
 
+	//Canvas will be disabled on team attack, reenabled after team attack
 	public void ChangeCanvasState(bool state){
 		GameObject c = GameObject.Find ("Canvas");
 		Canvas canvas = c.GetComponent <Canvas> ();

@@ -2,22 +2,18 @@
 using System.Collections;
 using UnityEngine.SceneManagement;
 
+/*
+ * Allows team attacks to be created. Implementation in Rhythm Controller and UIController
+ * Written by: Betsey McCarthy
+ */
 public class TeamAttack : Action {
-	private int baseDamage;
-	private string name;
 
+	//same constructor as action
 	public TeamAttack(string name, int baseDamage,ParticleSystem particleSystem) : base(name,  baseDamage,  particleSystem){
 	}
-		
+
+	//action behavior determined in rhythm controller
 	public override void ActionBehavior (){
 	}
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+
 }

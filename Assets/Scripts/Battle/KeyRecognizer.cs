@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+/*
+ * Used to detect key presses in team attack.  
+ * Written by: Aneesha Smith
+ */
 public class KeyRecognizer : MonoBehaviour {
 
 	public KeyCode press;

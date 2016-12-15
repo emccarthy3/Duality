@@ -6,6 +6,9 @@ using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using System.Linq;
 
+/*
+ * Quiz controller class. Written by Evan Elkin and Betsey McCarthy.
+ */ 
 public class Quiz : MonoBehaviour {
 	private GameObject gc;
 	private GameController gameController;
@@ -13,10 +16,11 @@ public class Quiz : MonoBehaviour {
 	[SerializeField] private Button quizArcherButton;
 	[SerializeField] private Button quizFighterButton;
 	[SerializeField] private Button quizMagicianButton;
+	private Text question;
+	private bool isFinished;
+	private Dictionary<string, int> buttonDictionary = new Dictionary<string, int> ();
 
-	private Dictionary<string, int> d = new Dictionary<string, int> ();
-
-	//i is what question the player is on
+	//Quiz questions array. i is what question the player is on.
 	private int i = 0;
 	private string[] questions = {"People would say that I’m the life of the party!", 
 		"If I saw a bank robbery, I would chase after the robbers and help bring them to justice.", 
@@ -34,23 +38,19 @@ public class Quiz : MonoBehaviour {
 		"My best friend just cheated off of my test and got an A… I can’t risk them getting suspended, so I guess I’ll pretend I didn’t know.",
 		"You can probably find me playing a game of chess rather than watching."
 	};
-	private Text question;
-	private bool isFinished;
-	Dictionary<string, int> classes = new Dictionary<string, int>();
 
-
-	// Use this for initialization
-	 void Start() {
-		d.Add ("quizArcherButton", 0);
-		d.Add ("quizFighterButton", 0);
-		d.Add ("quizMagicianButton", 0);
+	// Use this for initialization of buttons and quiz question text.
+	void Start() {
+		buttonDictionary.Add ("quizArcherButton", 0);
+		buttonDictionary.Add ("quizFighterButton", 0);
+		buttonDictionary.Add ("quizMagicianButton", 0);
 		gc = GameObject.Find ("GameController");
 		gameController= gc.GetComponent <GameController> ();
-		quizArcherButton.onClick.AddListener(() =>  {d["quizArcherButton"]++;i++;
+		quizArcherButton.onClick.AddListener(() =>  {buttonDictionary["quizArcherButton"]++;i++;
 			question.text = questions [i];});
-		quizFighterButton.onClick.AddListener(() =>  {d["quizFighterButton"]++;i++;
+		quizFighterButton.onClick.AddListener(() =>  {buttonDictionary["quizFighterButton"]++;i++;
 			question.text = questions [i];});
-		quizMagicianButton.onClick.AddListener(() =>  {d["quizMagicianButton"]++;i++;
+		quizMagicianButton.onClick.AddListener(() =>  {buttonDictionary["quizMagicianButton"]++;i++;
 			question.text = questions [i];});
 		endButton.gameObject.SetActive (false);
 		isFinished = false;
@@ -61,12 +61,12 @@ public class Quiz : MonoBehaviour {
 		question.text = questions [i]; 
 	}
 
-	// Update is called once per frame
+	// Update is called once per frame. Checks to see if player has gone through quiz. If they have, computes scores and assigns player a character class and ally.
 	void Update () {
 		//if the quiz has gone through all of the questions in the questions array
 		if (i == questions.Length) {
 			// max is the max value in the dictionary.  Source : http://stackoverflow.com/questions/2805703/good-way-to-get-the-key-of-the-highest-value-of-a-dictionary-in-c-sharp
-			string max = d.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
+			string max = buttonDictionary.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
 			if (max == "quizFighterButton") {
 				gameController.YourPlayer = new Player(new Warrior());
 				gameController.YourPartner = new Ally (new Magician ());
@@ -92,12 +92,14 @@ public class Quiz : MonoBehaviour {
 				gameController.YourPlayer.PlayerSprite = gameController.Sprites [2];
 				Debug.Log ("Your Personality is" + gameController.YourPlayer.PersonalityType);
 			}
-
+			quizArcherButton.gameObject.SetActive (false);
+			quizFighterButton.gameObject.SetActive (false);
+			quizMagicianButton.gameObject.SetActive (false);
 			endButton.gameObject.SetActive (true);
 		}
-
 	}
-		
+
+	// property for if the quiz is finished or not.
 	public bool IsFinished{
 		get{ return isFinished; }
 		set{ isFinished = value; }

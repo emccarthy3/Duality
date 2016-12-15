@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+/*
+ * Script for inidividual note objects
+ * Written by: Aneesha Smith
+ */
 public class NoteScript : MonoBehaviour {
 
 	// the total of the points
@@ -8,6 +11,8 @@ public class NoteScript : MonoBehaviour {
 	private RhythmController rhythmController;
 	private GameObject gc;
 	private GameController gameController;
+
+	//Initializes gravity based on RP
 	void Start(){
 		gc = GameObject.Find ("GameController");
 		gameController= gc.GetComponent <GameController> ();
@@ -16,6 +21,7 @@ public class NoteScript : MonoBehaviour {
 		Debug.Log (gameController.YourPlayer.RP);
 		Physics2D.gravity = new Vector3(0,-(100-gameController.YourPlayer.RP) , 0);
 	}
+	//Checks to see if arrow was held down when the note fell or not.  If the note was successfully hit, the score will increment by 1
 	void OnTriggerEnter2D (Collider2D col) {
 		// if the note hits the nozone, it is a missed note
 		if (col.gameObject.tag == "fail") {

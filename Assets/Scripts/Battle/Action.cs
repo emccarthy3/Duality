@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-//defines different actions which can be taken during battle. The characters will have 4 different actions which will be determined by class type
+/* Engine code for defining attacks
+ * The characters will have 4 different actions which will be determined by class type in our implementation
+ * Written by: Betsey McCarthy
+ */
 public abstract class Action {
 	private int baseDamage;
 	private string name;
@@ -9,29 +12,25 @@ public abstract class Action {
 	private int effectDamage;
 	private ParticleSystem particleEffect;
 
-
+	//constructor for action which defines baseDamage, name, and particle system for move
 	public Action(string name, int baseDamage,ParticleSystem particleSystem) {
 		Name = name;
 		BaseDamage = baseDamage;
 		ParticleEffect = particleSystem;
 	}
+
 	//base damage defines the initial amount of damage dealt by the moves
 	public int BaseDamage {
 		get{return baseDamage;}
 		set{ baseDamage = value; }
-
 	}
+
 	//calculates the total damage done by a move depending on base damage and class Type
 	public double CalculateDamage(Character attacker, Character defender, int battleCount){
 		//get base damage of move 
 		//add additional damage based on class of attacker and defender
 		ActionBehavior();
 		double damage =  baseDamage * attacker.Type.ClassEffectiveness[defender.Type.ClassName];
-		if (damage < defender.EncourageCount) {
-			damage = 0;
-		} else {
-			damage -= defender.EncourageCount;
-		}
 		if(damage != 0){
 			damage += battleCount;
 		}
